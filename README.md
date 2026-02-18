@@ -23,5 +23,6 @@ QuantityMeasurementApp/
 ## Week 1: Quantity Measurement System
 **TDD Approach & Unit Conversion**
 
-*   **18-Feb-2026 (Wednesday):** Created the repository and set up the project structure. Started implementing the Quantity Measurement System using Test Driven Development (TDD). Addressed UC1 (Feet Equality) to handle feet measurement comparisons.
+*   **18-Feb-2026 (Wednesday):** Created the repository and set up the project structure. Started implementing the Quantity Measurement System using Test Driven Development (TDD). Addressed UC1 (Feet Equality) to handle feet measurement comparisons. Extended functionality to support **Inches Equality** (UC2), allowing comparison of inch values with 100% test coverage.
     *   [Browse UC1 Implementation](https://github.com/skyy4/QuantityMeasurementApp/tree/feature/UC1-FeetEquality)
+    *   [Browse UC2 Implementation](https://github.com/skyy4/QuantityMeasurementApp/tree/feature/UC2-FeetAndInchesEquality)
