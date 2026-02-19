@@ -6,68 +6,59 @@ import static org.junit.Assert.*;
 public class QuantityMeasurementAppTest {
 
     @Test
-    public void testFeetEquality_SameValue() {
-        QuantityMeasurementApp.Feet feet1 = new QuantityMeasurementApp.Feet(1.0);
-        QuantityMeasurementApp.Feet feet2 = new QuantityMeasurementApp.Feet(1.0);
+    public void testEquality_FeetToFeet_SameValue() {
+        Quantity feet1 = new Quantity(1.0, LengthUnit.FEET);
+        Quantity feet2 = new Quantity(1.0, LengthUnit.FEET);
         assertTrue(feet1.equals(feet2));
     }
 
     @Test
-    public void testFeetEquality_DifferentValue() {
-        QuantityMeasurementApp.Feet feet1 = new QuantityMeasurementApp.Feet(1.0);
-        QuantityMeasurementApp.Feet feet2 = new QuantityMeasurementApp.Feet(2.0);
+    public void testEquality_InchToInch_SameValue() {
+        Quantity inch1 = new Quantity(1.0, LengthUnit.INCH);
+        Quantity inch2 = new Quantity(1.0, LengthUnit.INCH);
+        assertTrue(inch1.equals(inch2));
+    }
+
+    @Test
+    public void testEquality_InchToFeet_EquivalentValue() {
+        Quantity inch = new Quantity(12.0, LengthUnit.INCH);
+        Quantity feet = new Quantity(1.0, LengthUnit.FEET);
+        assertTrue(inch.equals(feet));
+    }
+
+    @Test
+    public void testEquality_FeetToFeet_DifferentValue() {
+        Quantity feet1 = new Quantity(1.0, LengthUnit.FEET);
+        Quantity feet2 = new Quantity(2.0, LengthUnit.FEET);
         assertFalse(feet1.equals(feet2));
     }
 
     @Test
-    public void testFeetEquality_NullComparison() {
-        QuantityMeasurementApp.Feet feet1 = new QuantityMeasurementApp.Feet(1.0);
-        assertFalse(feet1.equals(null));
+    public void testEquality_InchToInch_DifferentValue() {
+        Quantity inch1 = new Quantity(1.0, LengthUnit.INCH);
+        Quantity inch2 = new Quantity(2.0, LengthUnit.INCH);
+        assertFalse(inch1.equals(inch2));
     }
 
     @Test
-    public void testFeetEquality_NonNumericInput() {
-        QuantityMeasurementApp.Feet feet1 = new QuantityMeasurementApp.Feet(1.0);
-        Object nonNumeric = new Object();
-        assertFalse(feet1.equals(nonNumeric));
+    public void testEquality_NullComparison() {
+        Quantity feet = new Quantity(1.0, LengthUnit.FEET);
+        assertFalse(feet.equals(null));
     }
 
     @Test
-    public void testFeetEquality_SameReference() {
-        QuantityMeasurementApp.Feet feet1 = new QuantityMeasurementApp.Feet(1.0);
-        assertTrue(feet1.equals(feet1));
+    public void testEquality_SameReference() {
+        Quantity feet = new Quantity(1.0, LengthUnit.FEET);
+        assertTrue(feet.equals(feet));
     }
 
     @Test
-    public void testInchesEquality_SameValue() {
-        QuantityMeasurementApp.Inches inches1 = new QuantityMeasurementApp.Inches(1.0);
-        QuantityMeasurementApp.Inches inches2 = new QuantityMeasurementApp.Inches(1.0);
-        assertTrue(inches1.equals(inches2));
-    }
-
-    @Test
-    public void testInchesEquality_DifferentValue() {
-        QuantityMeasurementApp.Inches inches1 = new QuantityMeasurementApp.Inches(1.0);
-        QuantityMeasurementApp.Inches inches2 = new QuantityMeasurementApp.Inches(2.0);
-        assertFalse(inches1.equals(inches2));
-    }
-
-    @Test
-    public void testInchesEquality_NullComparison() {
-        QuantityMeasurementApp.Inches inches1 = new QuantityMeasurementApp.Inches(1.0);
-        assertFalse(inches1.equals(null));
-    }
-
-    @Test
-    public void testInchesEquality_NonNumericInput() {
-        QuantityMeasurementApp.Inches inches1 = new QuantityMeasurementApp.Inches(1.0);
-        Object nonNumeric = new Object();
-        assertFalse(inches1.equals(nonNumeric));
-    }
-
-    @Test
-    public void testInchesEquality_SameReference() {
-        QuantityMeasurementApp.Inches inches1 = new QuantityMeasurementApp.Inches(1.0);
-        assertTrue(inches1.equals(inches1));
+    public void testEquality_NonNumericInput() {
+        // Technically strict type check in Java prevents passing non-Quantity to
+        // `equals` if we used a specific type,
+        // but `equals` takes Object.
+        Quantity feet = new Quantity(1.0, LengthUnit.FEET);
+        Object nonQuantity = new Object();
+        assertFalse(feet.equals(nonQuantity));
     }
 }
