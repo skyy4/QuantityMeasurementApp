@@ -419,4 +419,58 @@ public class QuantityMeasurementAppTest {
         Quantity expected = new Quantity(2.0 / 3.0, LengthUnit.YARD); // ~0.667 yards
         assertTrue(expected.equals(length1.add(length2, LengthUnit.YARD)));
     }
+
+    // --- Enum Conversion Tests (UC8) ---
+
+    @Test
+    public void testLengthUnitEnum_FeetConstant() {
+        assertEquals(12.0, LengthUnit.FEET.getConversionFactor(), 1e-6);
+    }
+
+    @Test
+    public void testLengthUnitEnum_InchesConstant() {
+        assertEquals(1.0, LengthUnit.INCH.getConversionFactor(), 1e-6);
+    }
+
+    @Test
+    public void testLengthUnitEnum_YardsConstant() {
+        assertEquals(36.0, LengthUnit.YARD.getConversionFactor(), 1e-6);
+    }
+
+    @Test
+    public void testLengthUnitEnum_CentimetersConstant() {
+        assertEquals(0.393701, LengthUnit.CENTIMETER.getConversionFactor(), 1e-6);
+    }
+
+    @Test
+    public void testConvertToBaseUnit_Feet() {
+        assertEquals(60.0, LengthUnit.FEET.convertToBaseUnit(5.0), 1e-6);
+    }
+
+    @Test
+    public void testConvertFromBaseUnit_Feet() {
+        assertEquals(2.0, LengthUnit.FEET.convertFromBaseUnit(24.0), 1e-6);
+    }
+
+    @Test
+    public void testConvertToBaseUnit_Yards() {
+        assertEquals(72.0, LengthUnit.YARD.convertToBaseUnit(2.0), 1e-6);
+    }
+
+    @Test
+    public void testRoundTripConversion_RefactoredDesign() {
+        double value = 5.0;
+        double inBase = LengthUnit.YARD.convertToBaseUnit(value);
+        double backToYard = LengthUnit.YARD.convertFromBaseUnit(inBase);
+        assertEquals(value, backToYard, 1e-6);
+    }
+
+    @Test
+    public void testArchitecturalScalability_UnitIndependence() {
+        // Since logic relies completely on enum abstract properties, there should be no
+        // problem scaling
+        double value = 1.0;
+        double base = LengthUnit.INCH.convertToBaseUnit(value);
+        assertEquals(1.0, LengthUnit.INCH.convertFromBaseUnit(base), 1e-6);
+    }
 }
