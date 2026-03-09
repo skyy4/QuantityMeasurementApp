@@ -39,12 +39,32 @@ public class Quantity {
         return new Quantity(convertedValue, targetUnit);
     }
 
+    public Quantity add(Quantity other) {
+        if (other == null) {
+            throw new IllegalArgumentException("Cannot add a null quantity");
+        }
+
+        // Convert to common base unit (implicit base is inch in getConversionFactor)
+        double thisInBase = this.value * this.unit.getConversionFactor();
+        double otherInBase = other.value * other.unit.getConversionFactor();
+
+        // Add converted values
+        double sumInBase = thisInBase + otherInBase;
+
+        // Convert the sum back to the unit of the first operand
+        double sumInTargetUnit = sumInBase / this.unit.getConversionFactor();
+
+        return new Quantity(sumInTargetUnit, this.unit);
+    }
+
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
         Quantity quantity = (Quantity) obj;
-        
+
         // Use epsilon for robust double comparisons
         double epsilon = 1e-6;
         return Math.abs(compareValue(quantity) - compareValue(this)) < epsilon;
@@ -53,7 +73,7 @@ public class Quantity {
     private double compareValue(Quantity quantity) {
         return quantity.value * quantity.unit.getConversionFactor();
     }
-    
+
     @Override
     public String toString() {
         return "Quantity{value=" + value + ", unit=" + unit + "}";

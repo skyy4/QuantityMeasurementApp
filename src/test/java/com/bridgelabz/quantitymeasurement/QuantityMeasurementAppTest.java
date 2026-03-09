@@ -242,4 +242,103 @@ public class QuantityMeasurementAppTest {
     public void testQuantityCreation_NaN_Throws() {
         new Quantity(Double.NaN, LengthUnit.FEET);
     }
+
+    // --- Addition Tests (UC6) ---
+
+    @Test
+    public void testAddition_SameUnit_FeetPlusFeet() {
+        Quantity length1 = new Quantity(1.0, LengthUnit.FEET);
+        Quantity length2 = new Quantity(2.0, LengthUnit.FEET);
+        Quantity expected = new Quantity(3.0, LengthUnit.FEET);
+        assertTrue(expected.equals(length1.add(length2)));
+    }
+
+    @Test
+    public void testAddition_SameUnit_InchPlusInch() {
+        Quantity length1 = new Quantity(6.0, LengthUnit.INCH);
+        Quantity length2 = new Quantity(6.0, LengthUnit.INCH);
+        Quantity expected = new Quantity(12.0, LengthUnit.INCH);
+        assertTrue(expected.equals(length1.add(length2)));
+    }
+
+    @Test
+    public void testAddition_CrossUnit_FeetPlusInches() {
+        Quantity length1 = new Quantity(1.0, LengthUnit.FEET);
+        Quantity length2 = new Quantity(12.0, LengthUnit.INCH);
+        Quantity expected = new Quantity(2.0, LengthUnit.FEET);
+        assertTrue(expected.equals(length1.add(length2)));
+    }
+
+    @Test
+    public void testAddition_CrossUnit_InchPlusFeet() {
+        Quantity length1 = new Quantity(12.0, LengthUnit.INCH);
+        Quantity length2 = new Quantity(1.0, LengthUnit.FEET);
+        Quantity expected = new Quantity(24.0, LengthUnit.INCH);
+        assertTrue(expected.equals(length1.add(length2)));
+    }
+
+    @Test
+    public void testAddition_CrossUnit_YardPlusFeet() {
+        Quantity length1 = new Quantity(1.0, LengthUnit.YARD);
+        Quantity length2 = new Quantity(3.0, LengthUnit.FEET);
+        Quantity expected = new Quantity(2.0, LengthUnit.YARD);
+        assertTrue(expected.equals(length1.add(length2)));
+    }
+
+    @Test
+    public void testAddition_CrossUnit_CentimeterPlusInch() {
+        Quantity length1 = new Quantity(2.54, LengthUnit.CENTIMETER);
+        Quantity length2 = new Quantity(1.0, LengthUnit.INCH);
+        Quantity expected = new Quantity(5.08, LengthUnit.CENTIMETER);
+        assertTrue(expected.equals(length1.add(length2)));
+    }
+
+    @Test
+    public void testAddition_Commutativity() {
+        Quantity length1 = new Quantity(1.0, LengthUnit.FEET);
+        Quantity length2 = new Quantity(12.0, LengthUnit.INCH);
+
+        Quantity result1 = length1.add(length2); // Should be 2.0 FEET
+        Quantity result2 = length2.add(length1); // Should be 24.0 INCHES
+
+        assertTrue(result1.equals(result2));
+    }
+
+    @Test
+    public void testAddition_WithZero() {
+        Quantity length1 = new Quantity(5.0, LengthUnit.FEET);
+        Quantity length2 = new Quantity(0.0, LengthUnit.INCH);
+        Quantity expected = new Quantity(5.0, LengthUnit.FEET);
+        assertTrue(expected.equals(length1.add(length2)));
+    }
+
+    @Test
+    public void testAddition_NegativeValues() {
+        Quantity length1 = new Quantity(5.0, LengthUnit.FEET);
+        Quantity length2 = new Quantity(-2.0, LengthUnit.FEET);
+        Quantity expected = new Quantity(3.0, LengthUnit.FEET);
+        assertTrue(expected.equals(length1.add(length2)));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddition_NullSecondOperand() {
+        Quantity length1 = new Quantity(1.0, LengthUnit.FEET);
+        length1.add(null);
+    }
+
+    @Test
+    public void testAddition_LargeValues() {
+        Quantity length1 = new Quantity(1e6, LengthUnit.FEET);
+        Quantity length2 = new Quantity(1e6, LengthUnit.FEET);
+        Quantity expected = new Quantity(2e6, LengthUnit.FEET);
+        assertTrue(expected.equals(length1.add(length2)));
+    }
+
+    @Test
+    public void testAddition_SmallValues() {
+        Quantity length1 = new Quantity(0.001, LengthUnit.FEET);
+        Quantity length2 = new Quantity(0.002, LengthUnit.FEET);
+        Quantity expected = new Quantity(0.003, LengthUnit.FEET);
+        assertTrue(expected.equals(length1.add(length2)));
+    }
 }
