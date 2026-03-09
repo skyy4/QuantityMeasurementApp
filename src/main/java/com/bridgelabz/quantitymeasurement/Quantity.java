@@ -1,10 +1,10 @@
 package com.bridgelabz.quantitymeasurement;
 
-public class Quantity {
+public class Quantity<U extends IMeasurable> {
     private final double value;
-    private final LengthUnit unit;
+    private final U unit;
 
-    public Quantity(double value, LengthUnit unit) {
+    public Quantity(double value, U unit) {
         if (unit == null) {
             throw new IllegalArgumentException("Unit cannot be null");
         }
@@ -19,24 +19,24 @@ public class Quantity {
         return value;
     }
 
-    public LengthUnit getUnit() {
+    public U getUnit() {
         return unit;
     }
 
-    public static double convert(double value, LengthUnit sourceUnit, LengthUnit targetUnit) {
+    public static <U extends IMeasurable> double convert(double value, U sourceUnit, U targetUnit) {
         if (sourceUnit == null || targetUnit == null) {
             throw new IllegalArgumentException("Units cannot be null");
         }
         if (!Double.isFinite(value)) {
             throw new IllegalArgumentException("Value must be a finite number");
         }
-        double baseValue = value * sourceUnit.getConversionFactor();
-        return baseValue / targetUnit.getConversionFactor();
+        double baseValue = sourceUnit.convertToBaseUnit(value);
+        return targetUnit.convertFromBaseUnit(baseValue);
     }
 
-    public Quantity convertTo(LengthUnit targetUnit) {
+    public Quantity<U> convertTo(U targetUnit) {
         double convertedValue = Quantity.convert(this.value, this.unit, targetUnit);
-        return new Quantity(convertedValue, targetUnit);
+        return new Quantity<>(convertedValue, targetUnit);
     }
 
     @Override
@@ -45,14 +45,18 @@ public class Quantity {
             return true;
         if (obj == null || getClass() != obj.getClass())
             return false;
-        Quantity quantity = (Quantity) obj;
+
+        Quantity<?> quantity = (Quantity<?>) obj;
+        if (this.unit.getClass() != quantity.unit.getClass()) {
+            return false;
+        }
 
         // Use epsilon for robust double comparisons
         double epsilon = 1e-6;
         return Math.abs(compareValue(quantity) - compareValue(this)) < epsilon;
     }
 
-    private double compareValue(Quantity quantity) {
+    private double compareValue(Quantity<?> quantity) {
         return quantity.value * quantity.unit.getConversionFactor();
     }
 

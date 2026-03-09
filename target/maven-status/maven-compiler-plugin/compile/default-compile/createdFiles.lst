@@ -1,2 +1,5 @@
+com/bridgelabz/quantitymeasurement/WeightUnit.class
 com/bridgelabz/quantitymeasurement/QuantityMeasurementApp.class
-com/bridgelabz/quantitymeasurement/QuantityMeasurementApp$Feet.class
+com/bridgelabz/quantitymeasurement/Quantity.class
+com/bridgelabz/quantitymeasurement/LengthUnit.class
+com/bridgelabz/quantitymeasurement/IMeasurable.class
