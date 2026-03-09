@@ -341,4 +341,82 @@ public class QuantityMeasurementAppTest {
         Quantity expected = new Quantity(0.003, LengthUnit.FEET);
         assertTrue(expected.equals(length1.add(length2)));
     }
+
+    // --- Addition Tests Explicit Target Unit (UC7) ---
+
+    @Test
+    public void testAddition_ExplicitTargetUnit_FeetPlusFeetToInches() {
+        Quantity length1 = new Quantity(1.0, LengthUnit.FEET);
+        Quantity length2 = new Quantity(2.0, LengthUnit.FEET);
+        Quantity expected = new Quantity(36.0, LengthUnit.INCH);
+        assertTrue(expected.equals(length1.add(length2, LengthUnit.INCH)));
+    }
+
+    @Test
+    public void testAddition_ExplicitTargetUnit_DifferentUnitsToTarget() {
+        Quantity length1 = new Quantity(1.0, LengthUnit.FEET);
+        Quantity length2 = new Quantity(12.0, LengthUnit.INCH);
+        Quantity expected = new Quantity(2.0, LengthUnit.FEET);
+        assertTrue(expected.equals(length1.add(length2, LengthUnit.FEET)));
+    }
+
+    @Test
+    public void testAddition_ExplicitTargetUnit_DifferentUnitsToThirdUnit() {
+        Quantity length1 = new Quantity(1.0, LengthUnit.FEET);
+        Quantity length2 = new Quantity(12.0, LengthUnit.INCH);
+        Quantity expected = new Quantity(24.0, LengthUnit.INCH);
+        assertTrue(expected.equals(length1.add(length2, LengthUnit.INCH)));
+    }
+
+    @Test
+    public void testAddition_ExplicitTargetUnit_SameOperandUnits() {
+        Quantity length1 = new Quantity(2.0, LengthUnit.INCH);
+        Quantity length2 = new Quantity(2.54, LengthUnit.CENTIMETER);
+        Quantity expected = new Quantity(3.0, LengthUnit.INCH);
+        assertTrue(expected.equals(length1.add(length2, LengthUnit.INCH)));
+    }
+
+    @Test
+    public void testAddition_ExplicitTargetUnit_DifferentInputScalesSmallTarget() {
+        Quantity length1 = new Quantity(1.0, LengthUnit.YARD);
+        Quantity length2 = new Quantity(2.0, LengthUnit.FEET);
+        Quantity expected = new Quantity(60.0, LengthUnit.INCH);
+        assertTrue(expected.equals(length1.add(length2, LengthUnit.INCH)));
+    }
+
+    @Test
+    public void testAddition_ExplicitTargetUnit_Centimeters() {
+        Quantity length1 = new Quantity(1.0, LengthUnit.FEET);
+        Quantity length2 = new Quantity(12.0, LengthUnit.INCH);
+        // Using conversion factor mathematically: 24 inches * cm/inch = ~60.96 cm
+        double expectedValue = 24.0 / LengthUnit.CENTIMETER.getConversionFactor();
+        Quantity expected = new Quantity(expectedValue, LengthUnit.CENTIMETER);
+        assertTrue(expected.equals(length1.add(length2, LengthUnit.CENTIMETER)));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddition_ExplicitTargetUnit_NullTarget() {
+        Quantity length1 = new Quantity(1.0, LengthUnit.FEET);
+        Quantity length2 = new Quantity(1.0, LengthUnit.FEET);
+        length1.add(length2, null);
+    }
+
+    @Test
+    public void testAddition_ExplicitTargetUnit_Commutativity() {
+        Quantity length1 = new Quantity(1.0, LengthUnit.FEET);
+        Quantity length2 = new Quantity(12.0, LengthUnit.INCH);
+
+        Quantity result1 = length1.add(length2, LengthUnit.YARD);
+        Quantity result2 = length2.add(length1, LengthUnit.YARD);
+
+        assertTrue(result1.equals(result2));
+    }
+
+    @Test
+    public void testAddition_ExplicitTargetUnit_SmallToLargeScale() {
+        Quantity length1 = new Quantity(12.0, LengthUnit.INCH);
+        Quantity length2 = new Quantity(12.0, LengthUnit.INCH);
+        Quantity expected = new Quantity(2.0 / 3.0, LengthUnit.YARD); // ~0.667 yards
+        assertTrue(expected.equals(length1.add(length2, LengthUnit.YARD)));
+    }
 }

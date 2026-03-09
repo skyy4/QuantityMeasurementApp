@@ -39,22 +39,32 @@ public class Quantity {
         return new Quantity(convertedValue, targetUnit);
     }
 
+    public Quantity add(Quantity other, LengthUnit targetUnit) {
+        if (targetUnit == null) {
+            throw new IllegalArgumentException("Target unit cannot be null");
+        }
+
+        double sumInBase = getSumInBaseUnit(other);
+
+        // Convert the sum to the target unit
+        double sumInTargetUnit = sumInBase / targetUnit.getConversionFactor();
+
+        return new Quantity(sumInTargetUnit, targetUnit);
+    }
+
     public Quantity add(Quantity other) {
+        return add(other, this.unit);
+    }
+
+    private double getSumInBaseUnit(Quantity other) {
         if (other == null) {
             throw new IllegalArgumentException("Cannot add a null quantity");
         }
 
-        // Convert to common base unit (implicit base is inch in getConversionFactor)
         double thisInBase = this.value * this.unit.getConversionFactor();
         double otherInBase = other.value * other.unit.getConversionFactor();
 
-        // Add converted values
-        double sumInBase = thisInBase + otherInBase;
-
-        // Convert the sum back to the unit of the first operand
-        double sumInTargetUnit = sumInBase / this.unit.getConversionFactor();
-
-        return new Quantity(sumInTargetUnit, this.unit);
+        return thisInBase + otherInBase;
     }
 
     @Override
