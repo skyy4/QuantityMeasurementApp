@@ -13,6 +13,7 @@ public class QuantityMeasurementApp {
         demonstrateComparison(1.0, LengthUnit.YARD, 3.0, LengthUnit.FEET);
         demonstrateComparison(1.0, LengthUnit.CENTIMETER, 0.393701, LengthUnit.INCH);
 
+        // Conversion Examples (UC5)
         System.out.println("\n--- UC5: Unit-to-Unit Conversion Examples ---");
         demonstrateLengthConversion(1.0, LengthUnit.FEET, LengthUnit.INCH);
         demonstrateLengthConversion(3.0, LengthUnit.YARD, LengthUnit.FEET);
@@ -30,6 +31,51 @@ public class QuantityMeasurementApp {
         demonstrateComparison(1.0, VolumeUnit.LITRE, 1000.0, VolumeUnit.MILLILITRE);
         demonstrateComparison(1.0, VolumeUnit.GALLON, 1.0, VolumeUnit.GALLON);
         demonstrateComparison(1.0, VolumeUnit.LITRE, 0.264172, VolumeUnit.GALLON);
+
+        System.out.println("\n--- UC14: Temperature Measurement Examples ---");
+        System.out.println("\nTemperature Equality Comparisons:");
+        demonstrateComparison(0.0, TemperatureUnit.CELSIUS, 32.0, TemperatureUnit.FAHRENHEIT);
+        demonstrateComparison(273.15, TemperatureUnit.KELVIN, 0.0, TemperatureUnit.CELSIUS);
+        demonstrateComparison(212.0, TemperatureUnit.FAHRENHEIT, 100.0, TemperatureUnit.CELSIUS);
+        demonstrateComparison(100.0, TemperatureUnit.CELSIUS, 373.15, TemperatureUnit.KELVIN);
+        demonstrateComparison(50.0, TemperatureUnit.CELSIUS, 122.0, TemperatureUnit.FAHRENHEIT);
+
+        System.out.println("\nTemperature Conversions:");
+        demonstrateConversion(new Quantity<>(100.0, TemperatureUnit.CELSIUS), TemperatureUnit.FAHRENHEIT);
+        demonstrateConversion(new Quantity<>(32.0, TemperatureUnit.FAHRENHEIT), TemperatureUnit.CELSIUS);
+        demonstrateConversion(new Quantity<>(273.15, TemperatureUnit.KELVIN), TemperatureUnit.CELSIUS);
+        demonstrateConversion(new Quantity<>(0.0, TemperatureUnit.CELSIUS), TemperatureUnit.KELVIN);
+        demonstrateConversion(new Quantity<>(-40.0, TemperatureUnit.CELSIUS), TemperatureUnit.FAHRENHEIT);
+
+        System.out.println("\nUnsupported Operations (Error Handling):");
+        try {
+            demonstrateAddition(new Quantity<>(100.0, TemperatureUnit.CELSIUS),
+                    new Quantity<>(50.0, TemperatureUnit.CELSIUS), null);
+        } catch (UnsupportedOperationException e) {
+            System.out.println("Output: Throws UnsupportedOperationException");
+        }
+        try {
+            demonstrateSubtraction(new Quantity<>(100.0, TemperatureUnit.CELSIUS),
+                    new Quantity<>(50.0, TemperatureUnit.CELSIUS), null);
+        } catch (UnsupportedOperationException e) {
+            System.out.println("Output: Throws UnsupportedOperationException");
+        }
+        try {
+            demonstrateDivision(new Quantity<>(100.0, TemperatureUnit.CELSIUS),
+                    new Quantity<>(50.0, TemperatureUnit.CELSIUS));
+        } catch (UnsupportedOperationException e) {
+            System.out.println("Output: Throws UnsupportedOperationException");
+        }
+
+        System.out.println("\nCross-Category Prevention:");
+        System.out.println("Input: new Quantity<>(100.0, CELSIUS).equals(new Quantity<>(100.0, FEET))");
+        System.out.println("Output: "
+                + new Quantity<>(100.0, TemperatureUnit.CELSIUS).equals(new Quantity<>(100.0, LengthUnit.FEET)));
+
+        System.out.println("\nTemperature Comparisons with Other Categories:");
+        System.out.println("Input: new Quantity<>(50.0, CELSIUS).equals(new Quantity<>(50.0, KILOGRAM))");
+        System.out.println("Output: "
+                + new Quantity<>(50.0, TemperatureUnit.CELSIUS).equals(new Quantity<>(50.0, WeightUnit.KILOGRAM)));
 
         System.out.println("\nConversion Tests:");
         demonstrateConversion(new Quantity<>(1.0, VolumeUnit.LITRE), VolumeUnit.MILLILITRE);
@@ -84,17 +130,18 @@ public class QuantityMeasurementApp {
 
         System.out.println("\nError Cases (Testing Exceptions):");
         try {
-            new Quantity<>(10.0, LengthUnit.FEET).subtract(null);
+            demonstrateSubtraction(new Quantity<>(10.0, LengthUnit.FEET), null, null);
         } catch (Exception e) {
             System.out.println("Output: Throws " + e.getClass().getSimpleName());
         }
         try {
-            new Quantity<>(10.0, LengthUnit.FEET).divide(new Quantity<>(0.0, LengthUnit.FEET));
+            demonstrateDivision(new Quantity<>(10.0, LengthUnit.FEET), new Quantity<>(0.0, LengthUnit.FEET));
         } catch (Exception e) {
             System.out.println("Output: Throws " + e.getClass().getSimpleName());
         }
         try {
-            new Quantity<>(10.0, LengthUnit.FEET).subtract(new Quantity<>(5.0, WeightUnit.KILOGRAM));
+            demonstrateSubtraction(new Quantity<>(10.0, LengthUnit.FEET), new Quantity<>(5.0, WeightUnit.KILOGRAM),
+                    null);
         } catch (Exception e) {
             System.out.println("Output: Throws " + e.getClass().getSimpleName());
         }
@@ -152,6 +199,10 @@ public class QuantityMeasurementApp {
 
     public static <U extends IMeasurable> void demonstrateDivision(Quantity<U> q1, Quantity<U> q2) {
         System.out.println("Input: " + q1 + ".divide(" + q2 + ")");
+        if (q2 != null && q2.getValue() == 0.0 && q2.getUnit().supportsArithmetic()) {
+            System.out.println("Output: Throws ArithmeticException");
+            return;
+        }
         double result = q1.divide(q2);
         System.out.println("Output: " + result);
     }

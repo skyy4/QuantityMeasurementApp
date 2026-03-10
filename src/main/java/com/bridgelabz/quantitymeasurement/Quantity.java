@@ -81,6 +81,7 @@ public class Quantity<U extends IMeasurable> {
     }
 
     private double performBaseArithmetic(Quantity<U> other, ArithmeticOperation operation) {
+        this.unit.validateOperationSupport(operation.name());
         double thisInBase = this.unit.convertToBaseUnit(this.value);
         double otherInBase = other.unit.convertToBaseUnit(other.value);
         return operation.compute(thisInBase, otherInBase);
@@ -125,6 +126,7 @@ public class Quantity<U extends IMeasurable> {
             return false;
         }
 
+        // Use epsilon for robust double comparisons
         double epsilon = 1e-6;
         return Math.abs(compareValue(quantity) - compareValue(this)) < epsilon;
     }
