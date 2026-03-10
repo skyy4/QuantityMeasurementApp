@@ -40,3 +40,9 @@ QuantityMeasurementApp/
     *   [Browse UC8 Implementation](https://github.com/skyy4/QuantityMeasurementApp/tree/feature/UC8-EnumRefactoring)
     *   [Browse UC9 Implementation](https://github.com/skyy4/QuantityMeasurementApp/tree/feature/UC9-WeightMeasurement)
     *   [Browse UC10 Implementation](https://github.com/skyy4/QuantityMeasurementApp/tree/feature/UC10-GenericQuantity)
+
+*   **10-Mar-2026 (Tuesday):** Extended the capabilities to include the `VolumeUnit` measurement category (UC11). Added support for Subtraction and Division arithmetic operations across categories (UC12). Refactored arithmetic logic into a centralized `ArithmeticOperation` enum to maintain the DRY principle (UC13). Finally, added `TemperatureUnit` with a `SupportsArithmetic` interface inside `IMeasurable` to cleanly disable operations on non-linear units (UC14).
+    *   [Browse UC11 Implementation](https://github.com/skyy4/QuantityMeasurementApp/tree/feature/UC11-VolumeMeasurement)
+    *   [Browse UC12 Implementation](https://github.com/skyy4/QuantityMeasurementApp/tree/feature/UC12-ArithmeticOperations)
+    *   [Browse UC13 Implementation](https://github.com/skyy4/QuantityMeasurementApp/tree/feature/UC13-CentralizedArithmetic)
+    *   [Browse UC14 Implementation](https://github.com/skyy4/QuantityMeasurementApp/tree/feature/UC14-TemperatureMeasurement)
