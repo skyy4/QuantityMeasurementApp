@@ -24,6 +24,26 @@ public class QuantityMeasurementApp {
         System.out.println("\n--- Overloaded convert method ---");
         Quantity<LengthUnit> lengthInYards = new Quantity<>(3.0, LengthUnit.YARD);
         demonstrateConversion(lengthInYards, LengthUnit.INCH);
+
+        System.out.println("\n--- UC11: Volume Measurement Examples ---");
+        System.out.println("\nEquality Tests:");
+        demonstrateComparison(1.0, VolumeUnit.LITRE, 1.0, VolumeUnit.LITRE);
+        demonstrateComparison(1.0, VolumeUnit.LITRE, 1000.0, VolumeUnit.MILLILITRE);
+        demonstrateComparison(1.0, VolumeUnit.GALLON, 1.0, VolumeUnit.GALLON);
+        demonstrateComparison(1.0, VolumeUnit.LITRE, 0.264172, VolumeUnit.GALLON);
+
+        System.out.println("\nConversion Tests:");
+        demonstrateConversion(new Quantity<>(1.0, VolumeUnit.LITRE), VolumeUnit.MILLILITRE);
+        demonstrateConversion(new Quantity<>(2.0, VolumeUnit.GALLON), VolumeUnit.LITRE);
+        demonstrateConversion(new Quantity<>(500.0, VolumeUnit.MILLILITRE), VolumeUnit.GALLON);
+
+        System.out.println("\nAddition Tests:");
+        demonstrateAddition(new Quantity<>(1.0, VolumeUnit.LITRE), new Quantity<>(2.0, VolumeUnit.LITRE), null);
+        demonstrateAddition(new Quantity<>(1.0, VolumeUnit.LITRE), new Quantity<>(1000.0, VolumeUnit.MILLILITRE), null);
+        demonstrateAddition(new Quantity<>(1.0, VolumeUnit.LITRE), new Quantity<>(1000.0, VolumeUnit.MILLILITRE),
+                VolumeUnit.MILLILITRE);
+        demonstrateAddition(new Quantity<>(1.0, VolumeUnit.GALLON), new Quantity<>(3.78541, VolumeUnit.LITRE),
+                VolumeUnit.GALLON);
     }
 
     public static void demonstrateEquality(Quantity<?> q1, Quantity<?> q2) {
@@ -57,5 +77,12 @@ public class QuantityMeasurementApp {
                 "Input: convert(" + quantity.getValue() + " " + quantity.getUnit().getUnitName() + " to "
                         + targetUnit.getUnitName() + ")");
         System.out.println("Output: " + result.getValue());
+    }
+
+    public static <U extends IMeasurable> void demonstrateAddition(Quantity<U> q1, Quantity<U> q2, U targetUnit) {
+        String targetName = (targetUnit == null) ? q1.getUnit().getUnitName() : targetUnit.getUnitName();
+        System.out.println("Input: " + q1 + ".add(" + q2 + ", " + targetName + ")");
+        Quantity<U> result = (targetUnit == null) ? q1.add(q2) : q1.add(q2, targetUnit);
+        System.out.println("Output: " + result);
     }
 }
