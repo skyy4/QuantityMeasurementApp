@@ -1,13 +1,20 @@
 package com.bridgelabz.quantitymeasurement;
 
+import java.util.List;
+
 /**
  * Application entry point. In UC15 this class is responsible only for
  * initializing the required layers (repository, service, controller) and
  * delegating demonstration flows to the controller using DTOs.
+ * <p>
+ * In UC16 it is further extended to choose between cache and database
+ * repositories based on {@link ApplicationConfig}, and to display repository
+ * statistics and persisted measurements.
  */
 public class QuantityMeasurementApp {
 
     private static QuantityMeasurementController controller;
+    private static IQuantityMeasurementRepository repository;
 
     public static void main(String[] args) {
         initialize();
@@ -259,10 +266,33 @@ public class QuantityMeasurementApp {
         } catch (Exception e) {
             System.out.println("Output: Throws " + e.getClass().getSimpleName());
         }
+
+        // UC16: Show persisted measurements and basic repository statistics
+        if (repository != null) {
+            System.out.println("\n--- Repository Statistics ---");
+            System.out.println("Total measurements stored: " + repository.getTotalCount());
+            System.out.println("Pool statistics: " + repository.getPoolStatistics());
+
+            List<QuantityMeasurementEntity> all = repository.getAllMeasurements();
+            System.out.println("\nStored Measurements:");
+            for (QuantityMeasurementEntity entity : all) {
+                System.out.println(entity);
+            }
+
+            // Clean up demo data so repeated runs do not accumulate indefinitely.
+            repository.deleteAll();
+            repository.releaseResources();
+        }
     }
 
     private static void initialize() {
-        IQuantityMeasurementRepository repository = QuantityMeasurementCacheRepository.getInstance();
+        ApplicationConfig config = ApplicationConfig.getInstance();
+        String type = config.getRepositoryType();
+        if ("DATABASE".equalsIgnoreCase(type)) {
+            repository = new QuantityMeasurementDatabaseRepository();
+        } else {
+            repository = QuantityMeasurementCacheRepository.getInstance();
+        }
         IQuantityMeasurementService service = new QuantityMeasurementServiceImpl(repository);
         controller = new QuantityMeasurementController(service);
     }

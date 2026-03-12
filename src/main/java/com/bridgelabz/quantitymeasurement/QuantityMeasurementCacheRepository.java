@@ -50,6 +50,49 @@ public class QuantityMeasurementCacheRepository implements IQuantityMeasurementR
         return Collections.unmodifiableList(new ArrayList<>(cache));
     }
 
+    @Override
+    public synchronized List<QuantityMeasurementEntity> getMeasurementsByOperation(
+            QuantityMeasurementEntity.OperationType operationType) {
+        List<QuantityMeasurementEntity> result = new ArrayList<>();
+        for (QuantityMeasurementEntity entity : cache) {
+            if (entity.getOperationType() == operationType) {
+                result.add(entity);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public synchronized List<QuantityMeasurementEntity> getMeasurementsByMeasurementType(
+            QuantityDTO.MeasurementType measurementType) {
+        List<QuantityMeasurementEntity> result = new ArrayList<>();
+        for (QuantityMeasurementEntity entity : cache) {
+            if (entity.getLeftOperand() != null && entity.getLeftOperand().getUnit() != null) {
+                QuantityDTO.MeasurementType detected = detectMeasurementType(entity.getLeftOperand().getUnit());
+                if (detected == measurementType) {
+                    result.add(entity);
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public synchronized long getTotalCount() {
+        return cache.size();
+    }
+
+    @Override
+    public synchronized void deleteAll() {
+        cache.clear();
+        if (storageFile.exists()) {
+            // best effort cleanup
+            if (!storageFile.delete()) {
+                saveToDisk();
+            }
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private void loadFromDisk() {
         if (!storageFile.exists()) {
@@ -74,5 +117,19 @@ public class QuantityMeasurementCacheRepository implements IQuantityMeasurementR
             // Persistence errors are non-fatal for the core measurement logic.
         }
     }
+
+    private QuantityDTO.MeasurementType detectMeasurementType(IMeasurable unit) {
+        if (unit instanceof LengthUnit) {
+            return QuantityDTO.MeasurementType.LENGTH;
+        } else if (unit instanceof WeightUnit) {
+            return QuantityDTO.MeasurementType.WEIGHT;
+        } else if (unit instanceof VolumeUnit) {
+            return QuantityDTO.MeasurementType.VOLUME;
+        } else if (unit instanceof TemperatureUnit) {
+            return QuantityDTO.MeasurementType.TEMPERATURE;
+        }
+        return null;
+    }
 }
+
 
