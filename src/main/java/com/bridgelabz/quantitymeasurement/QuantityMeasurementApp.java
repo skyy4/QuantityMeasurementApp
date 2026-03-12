@@ -1,69 +1,114 @@
 package com.bridgelabz.quantitymeasurement;
 
+/**
+ * Application entry point. In UC15 this class is responsible only for
+ * initializing the required layers (repository, service, controller) and
+ * delegating demonstration flows to the controller using DTOs.
+ */
 public class QuantityMeasurementApp {
 
+    private static QuantityMeasurementController controller;
+
     public static void main(String[] args) {
+        initialize();
+
         System.out.println("--- Quantity Measurement App ---");
 
         // Equality checks
         System.out.println("\nEquality Tests:");
-        demonstrateComparison(1.0, LengthUnit.FEET, 1.0, LengthUnit.FEET);
-        demonstrateComparison(1.0, LengthUnit.INCH, 1.0, LengthUnit.INCH);
-        demonstrateComparison(1.0, LengthUnit.FEET, 12.0, LengthUnit.INCH);
-        demonstrateComparison(1.0, LengthUnit.YARD, 3.0, LengthUnit.FEET);
-        demonstrateComparison(1.0, LengthUnit.CENTIMETER, 0.393701, LengthUnit.INCH);
+        demonstrateComparison(1.0, QuantityDTO.MeasurementType.LENGTH,
+                QuantityDTO.LengthUnitDTO.FEET, 1.0, QuantityDTO.LengthUnitDTO.FEET);
+        demonstrateComparison(1.0, QuantityDTO.MeasurementType.LENGTH,
+                QuantityDTO.LengthUnitDTO.INCH, 1.0, QuantityDTO.LengthUnitDTO.INCH);
+        demonstrateComparison(1.0, QuantityDTO.MeasurementType.LENGTH,
+                QuantityDTO.LengthUnitDTO.FEET, 12.0, QuantityDTO.LengthUnitDTO.INCH);
+        demonstrateComparison(1.0, QuantityDTO.MeasurementType.LENGTH,
+                QuantityDTO.LengthUnitDTO.YARD, 3.0, QuantityDTO.LengthUnitDTO.FEET);
+        demonstrateComparison(1.0, QuantityDTO.MeasurementType.LENGTH,
+                QuantityDTO.LengthUnitDTO.CENTIMETER, 0.393701, QuantityDTO.LengthUnitDTO.INCH);
 
         // Conversion Examples (UC5)
         System.out.println("\n--- UC5: Unit-to-Unit Conversion Examples ---");
-        demonstrateLengthConversion(1.0, LengthUnit.FEET, LengthUnit.INCH);
-        demonstrateLengthConversion(3.0, LengthUnit.YARD, LengthUnit.FEET);
-        demonstrateLengthConversion(36.0, LengthUnit.INCH, LengthUnit.YARD);
-        demonstrateLengthConversion(1.0, LengthUnit.CENTIMETER, LengthUnit.INCH);
-        demonstrateLengthConversion(0.0, LengthUnit.FEET, LengthUnit.INCH);
+        demonstrateLengthConversion(1.0, QuantityDTO.LengthUnitDTO.FEET, QuantityDTO.LengthUnitDTO.INCH);
+        demonstrateLengthConversion(3.0, QuantityDTO.LengthUnitDTO.YARD, QuantityDTO.LengthUnitDTO.FEET);
+        demonstrateLengthConversion(36.0, QuantityDTO.LengthUnitDTO.INCH, QuantityDTO.LengthUnitDTO.YARD);
+        demonstrateLengthConversion(1.0, QuantityDTO.LengthUnitDTO.CENTIMETER, QuantityDTO.LengthUnitDTO.INCH);
+        demonstrateLengthConversion(0.0, QuantityDTO.LengthUnitDTO.FEET, QuantityDTO.LengthUnitDTO.INCH);
 
         System.out.println("\n--- Overloaded convert method ---");
-        Quantity<LengthUnit> lengthInYards = new Quantity<>(3.0, LengthUnit.YARD);
-        demonstrateConversion(lengthInYards, LengthUnit.INCH);
+        QuantityDTO lengthInYards = new QuantityDTO(3.0, QuantityDTO.MeasurementType.LENGTH,
+                QuantityDTO.LengthUnitDTO.YARD);
+        demonstrateConversion(lengthInYards, QuantityDTO.LengthUnitDTO.INCH);
 
         System.out.println("\n--- UC11: Volume Measurement Examples ---");
         System.out.println("\nEquality Tests:");
-        demonstrateComparison(1.0, VolumeUnit.LITRE, 1.0, VolumeUnit.LITRE);
-        demonstrateComparison(1.0, VolumeUnit.LITRE, 1000.0, VolumeUnit.MILLILITRE);
-        demonstrateComparison(1.0, VolumeUnit.GALLON, 1.0, VolumeUnit.GALLON);
-        demonstrateComparison(1.0, VolumeUnit.LITRE, 0.264172, VolumeUnit.GALLON);
+        demonstrateComparison(1.0, QuantityDTO.MeasurementType.VOLUME,
+                QuantityDTO.VolumeUnitDTO.LITRE, 1.0, QuantityDTO.VolumeUnitDTO.LITRE);
+        demonstrateComparison(1.0, QuantityDTO.MeasurementType.VOLUME,
+                QuantityDTO.VolumeUnitDTO.LITRE, 1000.0, QuantityDTO.VolumeUnitDTO.MILLILITRE);
+        demonstrateComparison(1.0, QuantityDTO.MeasurementType.VOLUME,
+                QuantityDTO.VolumeUnitDTO.GALLON, 1.0, QuantityDTO.VolumeUnitDTO.GALLON);
+        demonstrateComparison(1.0, QuantityDTO.MeasurementType.VOLUME,
+                QuantityDTO.VolumeUnitDTO.LITRE, 0.264172, QuantityDTO.VolumeUnitDTO.GALLON);
 
         System.out.println("\n--- UC14: Temperature Measurement Examples ---");
         System.out.println("\nTemperature Equality Comparisons:");
-        demonstrateComparison(0.0, TemperatureUnit.CELSIUS, 32.0, TemperatureUnit.FAHRENHEIT);
-        demonstrateComparison(273.15, TemperatureUnit.KELVIN, 0.0, TemperatureUnit.CELSIUS);
-        demonstrateComparison(212.0, TemperatureUnit.FAHRENHEIT, 100.0, TemperatureUnit.CELSIUS);
-        demonstrateComparison(100.0, TemperatureUnit.CELSIUS, 373.15, TemperatureUnit.KELVIN);
-        demonstrateComparison(50.0, TemperatureUnit.CELSIUS, 122.0, TemperatureUnit.FAHRENHEIT);
+        demonstrateComparison(0.0, QuantityDTO.MeasurementType.TEMPERATURE,
+                QuantityDTO.TemperatureUnitDTO.CELSIUS, 32.0, QuantityDTO.TemperatureUnitDTO.FAHRENHEIT);
+        demonstrateComparison(273.15, QuantityDTO.MeasurementType.TEMPERATURE,
+                QuantityDTO.TemperatureUnitDTO.KELVIN, 0.0, QuantityDTO.TemperatureUnitDTO.CELSIUS);
+        demonstrateComparison(212.0, QuantityDTO.MeasurementType.TEMPERATURE,
+                QuantityDTO.TemperatureUnitDTO.FAHRENHEIT, 100.0, QuantityDTO.TemperatureUnitDTO.CELSIUS);
+        demonstrateComparison(100.0, QuantityDTO.MeasurementType.TEMPERATURE,
+                QuantityDTO.TemperatureUnitDTO.CELSIUS, 373.15, QuantityDTO.TemperatureUnitDTO.KELVIN);
+        demonstrateComparison(50.0, QuantityDTO.MeasurementType.TEMPERATURE,
+                QuantityDTO.TemperatureUnitDTO.CELSIUS, 122.0, QuantityDTO.TemperatureUnitDTO.FAHRENHEIT);
 
         System.out.println("\nTemperature Conversions:");
-        demonstrateConversion(new Quantity<>(100.0, TemperatureUnit.CELSIUS), TemperatureUnit.FAHRENHEIT);
-        demonstrateConversion(new Quantity<>(32.0, TemperatureUnit.FAHRENHEIT), TemperatureUnit.CELSIUS);
-        demonstrateConversion(new Quantity<>(273.15, TemperatureUnit.KELVIN), TemperatureUnit.CELSIUS);
-        demonstrateConversion(new Quantity<>(0.0, TemperatureUnit.CELSIUS), TemperatureUnit.KELVIN);
-        demonstrateConversion(new Quantity<>(-40.0, TemperatureUnit.CELSIUS), TemperatureUnit.FAHRENHEIT);
+        demonstrateConversion(new QuantityDTO(100.0, QuantityDTO.MeasurementType.TEMPERATURE,
+                        QuantityDTO.TemperatureUnitDTO.CELSIUS),
+                QuantityDTO.TemperatureUnitDTO.FAHRENHEIT);
+        demonstrateConversion(new QuantityDTO(32.0, QuantityDTO.MeasurementType.TEMPERATURE,
+                        QuantityDTO.TemperatureUnitDTO.FAHRENHEIT),
+                QuantityDTO.TemperatureUnitDTO.CELSIUS);
+        demonstrateConversion(new QuantityDTO(273.15, QuantityDTO.MeasurementType.TEMPERATURE,
+                        QuantityDTO.TemperatureUnitDTO.KELVIN),
+                QuantityDTO.TemperatureUnitDTO.CELSIUS);
+        demonstrateConversion(new QuantityDTO(0.0, QuantityDTO.MeasurementType.TEMPERATURE,
+                        QuantityDTO.TemperatureUnitDTO.CELSIUS),
+                QuantityDTO.TemperatureUnitDTO.KELVIN);
+        demonstrateConversion(new QuantityDTO(-40.0, QuantityDTO.MeasurementType.TEMPERATURE,
+                        QuantityDTO.TemperatureUnitDTO.CELSIUS),
+                QuantityDTO.TemperatureUnitDTO.FAHRENHEIT);
 
         System.out.println("\nUnsupported Operations (Error Handling):");
         try {
-            demonstrateAddition(new Quantity<>(100.0, TemperatureUnit.CELSIUS),
-                    new Quantity<>(50.0, TemperatureUnit.CELSIUS), null);
-        } catch (UnsupportedOperationException e) {
+            demonstrateAddition(
+                    new QuantityDTO(100.0, QuantityDTO.MeasurementType.TEMPERATURE,
+                            QuantityDTO.TemperatureUnitDTO.CELSIUS),
+                    new QuantityDTO(50.0, QuantityDTO.MeasurementType.TEMPERATURE,
+                            QuantityDTO.TemperatureUnitDTO.CELSIUS),
+                    null);
+        } catch (UnsupportedOperationException | QuantityMeasurementException e) {
             System.out.println("Output: Throws UnsupportedOperationException");
         }
         try {
-            demonstrateSubtraction(new Quantity<>(100.0, TemperatureUnit.CELSIUS),
-                    new Quantity<>(50.0, TemperatureUnit.CELSIUS), null);
-        } catch (UnsupportedOperationException e) {
+            demonstrateSubtraction(
+                    new QuantityDTO(100.0, QuantityDTO.MeasurementType.TEMPERATURE,
+                            QuantityDTO.TemperatureUnitDTO.CELSIUS),
+                    new QuantityDTO(50.0, QuantityDTO.MeasurementType.TEMPERATURE,
+                            QuantityDTO.TemperatureUnitDTO.CELSIUS),
+                    null);
+        } catch (UnsupportedOperationException | QuantityMeasurementException e) {
             System.out.println("Output: Throws UnsupportedOperationException");
         }
         try {
-            demonstrateDivision(new Quantity<>(100.0, TemperatureUnit.CELSIUS),
-                    new Quantity<>(50.0, TemperatureUnit.CELSIUS));
-        } catch (UnsupportedOperationException e) {
+            demonstrateDivision(
+                    new QuantityDTO(100.0, QuantityDTO.MeasurementType.TEMPERATURE,
+                            QuantityDTO.TemperatureUnitDTO.CELSIUS),
+                    new QuantityDTO(50.0, QuantityDTO.MeasurementType.TEMPERATURE,
+                            QuantityDTO.TemperatureUnitDTO.CELSIUS));
+        } catch (UnsupportedOperationException | QuantityMeasurementException e) {
             System.out.println("Output: Throws UnsupportedOperationException");
         }
 
@@ -78,132 +123,215 @@ public class QuantityMeasurementApp {
                 + new Quantity<>(50.0, TemperatureUnit.CELSIUS).equals(new Quantity<>(50.0, WeightUnit.KILOGRAM)));
 
         System.out.println("\nConversion Tests:");
-        demonstrateConversion(new Quantity<>(1.0, VolumeUnit.LITRE), VolumeUnit.MILLILITRE);
-        demonstrateConversion(new Quantity<>(2.0, VolumeUnit.GALLON), VolumeUnit.LITRE);
-        demonstrateConversion(new Quantity<>(500.0, VolumeUnit.MILLILITRE), VolumeUnit.GALLON);
+        demonstrateConversion(
+                new QuantityDTO(1.0, QuantityDTO.MeasurementType.VOLUME, QuantityDTO.VolumeUnitDTO.LITRE),
+                QuantityDTO.VolumeUnitDTO.MILLILITRE);
+        demonstrateConversion(
+                new QuantityDTO(2.0, QuantityDTO.MeasurementType.VOLUME, QuantityDTO.VolumeUnitDTO.GALLON),
+                QuantityDTO.VolumeUnitDTO.LITRE);
+        demonstrateConversion(
+                new QuantityDTO(500.0, QuantityDTO.MeasurementType.VOLUME, QuantityDTO.VolumeUnitDTO.MILLILITRE),
+                QuantityDTO.VolumeUnitDTO.GALLON);
 
         System.out.println("\nAddition Tests:");
-        demonstrateAddition(new Quantity<>(1.0, VolumeUnit.LITRE), new Quantity<>(2.0, VolumeUnit.LITRE), null);
-        demonstrateAddition(new Quantity<>(1.0, VolumeUnit.LITRE), new Quantity<>(1000.0, VolumeUnit.MILLILITRE), null);
-        demonstrateAddition(new Quantity<>(1.0, VolumeUnit.LITRE), new Quantity<>(1000.0, VolumeUnit.MILLILITRE),
-                VolumeUnit.MILLILITRE);
-        demonstrateAddition(new Quantity<>(1.0, VolumeUnit.GALLON), new Quantity<>(3.78541, VolumeUnit.LITRE),
-                VolumeUnit.GALLON);
+        demonstrateAddition(
+                new QuantityDTO(1.0, QuantityDTO.MeasurementType.VOLUME, QuantityDTO.VolumeUnitDTO.LITRE),
+                new QuantityDTO(2.0, QuantityDTO.MeasurementType.VOLUME, QuantityDTO.VolumeUnitDTO.LITRE),
+                null);
+        demonstrateAddition(
+                new QuantityDTO(1.0, QuantityDTO.MeasurementType.VOLUME, QuantityDTO.VolumeUnitDTO.LITRE),
+                new QuantityDTO(1000.0, QuantityDTO.MeasurementType.VOLUME,
+                        QuantityDTO.VolumeUnitDTO.MILLILITRE),
+                null);
+        demonstrateAddition(
+                new QuantityDTO(1.0, QuantityDTO.MeasurementType.VOLUME, QuantityDTO.VolumeUnitDTO.LITRE),
+                new QuantityDTO(1000.0, QuantityDTO.MeasurementType.VOLUME,
+                        QuantityDTO.VolumeUnitDTO.MILLILITRE),
+                QuantityDTO.VolumeUnitDTO.MILLILITRE);
+        demonstrateAddition(
+                new QuantityDTO(1.0, QuantityDTO.MeasurementType.VOLUME, QuantityDTO.VolumeUnitDTO.GALLON),
+                new QuantityDTO(3.78541, QuantityDTO.MeasurementType.VOLUME,
+                        QuantityDTO.VolumeUnitDTO.LITRE),
+                QuantityDTO.VolumeUnitDTO.GALLON);
 
         System.out.println("\n--- UC12: Subtraction and Division Examples ---");
         System.out.println("\nSubtraction Operations:");
-        demonstrateSubtraction(new Quantity<>(10.0, LengthUnit.FEET), new Quantity<>(6.0, LengthUnit.INCH), null);
-        demonstrateSubtraction(new Quantity<>(10.0, WeightUnit.KILOGRAM), new Quantity<>(5000.0, WeightUnit.GRAM),
+        demonstrateSubtraction(
+                new QuantityDTO(10.0, QuantityDTO.MeasurementType.LENGTH, QuantityDTO.LengthUnitDTO.FEET),
+                new QuantityDTO(6.0, QuantityDTO.MeasurementType.LENGTH, QuantityDTO.LengthUnitDTO.INCH),
                 null);
-        demonstrateSubtraction(new Quantity<>(5.0, VolumeUnit.LITRE), new Quantity<>(500.0, VolumeUnit.MILLILITRE),
+        demonstrateSubtraction(
+                new QuantityDTO(10.0, QuantityDTO.MeasurementType.WEIGHT, QuantityDTO.WeightUnitDTO.KILOGRAM),
+                new QuantityDTO(5000.0, QuantityDTO.MeasurementType.WEIGHT, QuantityDTO.WeightUnitDTO.GRAM),
+                null);
+        demonstrateSubtraction(
+                new QuantityDTO(5.0, QuantityDTO.MeasurementType.VOLUME, QuantityDTO.VolumeUnitDTO.LITRE),
+                new QuantityDTO(500.0, QuantityDTO.MeasurementType.VOLUME,
+                        QuantityDTO.VolumeUnitDTO.MILLILITRE),
                 null);
 
         System.out.println("\nSubtraction with Explicit Target Unit:");
-        demonstrateSubtraction(new Quantity<>(10.0, LengthUnit.FEET), new Quantity<>(6.0, LengthUnit.INCH),
-                LengthUnit.INCH);
-        demonstrateSubtraction(new Quantity<>(10.0, WeightUnit.KILOGRAM), new Quantity<>(5000.0, WeightUnit.GRAM),
-                WeightUnit.GRAM);
-        demonstrateSubtraction(new Quantity<>(5.0, VolumeUnit.LITRE), new Quantity<>(2.0, VolumeUnit.LITRE),
-                VolumeUnit.MILLILITRE);
+        demonstrateSubtraction(
+                new QuantityDTO(10.0, QuantityDTO.MeasurementType.LENGTH, QuantityDTO.LengthUnitDTO.FEET),
+                new QuantityDTO(6.0, QuantityDTO.MeasurementType.LENGTH, QuantityDTO.LengthUnitDTO.INCH),
+                QuantityDTO.LengthUnitDTO.INCH);
+        demonstrateSubtraction(
+                new QuantityDTO(10.0, QuantityDTO.MeasurementType.WEIGHT, QuantityDTO.WeightUnitDTO.KILOGRAM),
+                new QuantityDTO(5000.0, QuantityDTO.MeasurementType.WEIGHT, QuantityDTO.WeightUnitDTO.GRAM),
+                QuantityDTO.WeightUnitDTO.GRAM);
+        demonstrateSubtraction(
+                new QuantityDTO(5.0, QuantityDTO.MeasurementType.VOLUME, QuantityDTO.VolumeUnitDTO.LITRE),
+                new QuantityDTO(2.0, QuantityDTO.MeasurementType.VOLUME, QuantityDTO.VolumeUnitDTO.LITRE),
+                QuantityDTO.VolumeUnitDTO.MILLILITRE);
 
         System.out.println("\nSubtraction Resulting in Negative Values:");
-        demonstrateSubtraction(new Quantity<>(5.0, LengthUnit.FEET), new Quantity<>(10.0, LengthUnit.FEET), null);
-        demonstrateSubtraction(new Quantity<>(2.0, WeightUnit.KILOGRAM), new Quantity<>(5.0, WeightUnit.KILOGRAM),
+        demonstrateSubtraction(
+                new QuantityDTO(5.0, QuantityDTO.MeasurementType.LENGTH, QuantityDTO.LengthUnitDTO.FEET),
+                new QuantityDTO(10.0, QuantityDTO.MeasurementType.LENGTH, QuantityDTO.LengthUnitDTO.FEET),
+                null);
+        demonstrateSubtraction(
+                new QuantityDTO(2.0, QuantityDTO.MeasurementType.WEIGHT, QuantityDTO.WeightUnitDTO.KILOGRAM),
+                new QuantityDTO(5.0, QuantityDTO.MeasurementType.WEIGHT, QuantityDTO.WeightUnitDTO.KILOGRAM),
                 null);
 
         System.out.println("\nSubtraction Resulting in Zero:");
-        demonstrateSubtraction(new Quantity<>(10.0, LengthUnit.FEET), new Quantity<>(120.0, LengthUnit.INCH), null);
-        demonstrateSubtraction(new Quantity<>(1.0, VolumeUnit.LITRE), new Quantity<>(1000.0, VolumeUnit.MILLILITRE),
+        demonstrateSubtraction(
+                new QuantityDTO(10.0, QuantityDTO.MeasurementType.LENGTH, QuantityDTO.LengthUnitDTO.FEET),
+                new QuantityDTO(120.0, QuantityDTO.MeasurementType.LENGTH, QuantityDTO.LengthUnitDTO.INCH),
+                null);
+        demonstrateSubtraction(
+                new QuantityDTO(1.0, QuantityDTO.MeasurementType.VOLUME, QuantityDTO.VolumeUnitDTO.LITRE),
+                new QuantityDTO(1000.0, QuantityDTO.MeasurementType.VOLUME,
+                        QuantityDTO.VolumeUnitDTO.MILLILITRE),
                 null);
 
         System.out.println("\nDivision Operations:");
-        demonstrateDivision(new Quantity<>(10.0, LengthUnit.FEET), new Quantity<>(2.0, LengthUnit.FEET));
-        demonstrateDivision(new Quantity<>(10.0, LengthUnit.FEET), new Quantity<>(5.0, LengthUnit.FEET));
-        demonstrateDivision(new Quantity<>(24.0, LengthUnit.INCH), new Quantity<>(2.0, LengthUnit.FEET));
-        demonstrateDivision(new Quantity<>(10.0, WeightUnit.KILOGRAM), new Quantity<>(5.0, WeightUnit.KILOGRAM));
-        demonstrateDivision(new Quantity<>(5.0, VolumeUnit.LITRE), new Quantity<>(10.0, VolumeUnit.LITRE));
+        demonstrateDivision(
+                new QuantityDTO(10.0, QuantityDTO.MeasurementType.LENGTH, QuantityDTO.LengthUnitDTO.FEET),
+                new QuantityDTO(2.0, QuantityDTO.MeasurementType.LENGTH, QuantityDTO.LengthUnitDTO.FEET));
+        demonstrateDivision(
+                new QuantityDTO(10.0, QuantityDTO.MeasurementType.LENGTH, QuantityDTO.LengthUnitDTO.FEET),
+                new QuantityDTO(5.0, QuantityDTO.MeasurementType.LENGTH, QuantityDTO.LengthUnitDTO.FEET));
+        demonstrateDivision(
+                new QuantityDTO(24.0, QuantityDTO.MeasurementType.LENGTH, QuantityDTO.LengthUnitDTO.INCH),
+                new QuantityDTO(2.0, QuantityDTO.MeasurementType.LENGTH, QuantityDTO.LengthUnitDTO.FEET));
+        demonstrateDivision(
+                new QuantityDTO(10.0, QuantityDTO.MeasurementType.WEIGHT, QuantityDTO.WeightUnitDTO.KILOGRAM),
+                new QuantityDTO(5.0, QuantityDTO.MeasurementType.WEIGHT, QuantityDTO.WeightUnitDTO.KILOGRAM));
+        demonstrateDivision(
+                new QuantityDTO(5.0, QuantityDTO.MeasurementType.VOLUME, QuantityDTO.VolumeUnitDTO.LITRE),
+                new QuantityDTO(10.0, QuantityDTO.MeasurementType.VOLUME, QuantityDTO.VolumeUnitDTO.LITRE));
 
         System.out.println("\nDivision with Different Units (Same Category):");
-        demonstrateDivision(new Quantity<>(12.0, LengthUnit.INCH), new Quantity<>(1.0, LengthUnit.FEET));
-        demonstrateDivision(new Quantity<>(2000.0, WeightUnit.GRAM), new Quantity<>(1.0, WeightUnit.KILOGRAM));
-        demonstrateDivision(new Quantity<>(1000.0, VolumeUnit.MILLILITRE), new Quantity<>(1.0, VolumeUnit.LITRE));
+        demonstrateDivision(
+                new QuantityDTO(12.0, QuantityDTO.MeasurementType.LENGTH, QuantityDTO.LengthUnitDTO.INCH),
+                new QuantityDTO(1.0, QuantityDTO.MeasurementType.LENGTH, QuantityDTO.LengthUnitDTO.FEET));
+        demonstrateDivision(
+                new QuantityDTO(2000.0, QuantityDTO.MeasurementType.WEIGHT, QuantityDTO.WeightUnitDTO.GRAM),
+                new QuantityDTO(1.0, QuantityDTO.MeasurementType.WEIGHT, QuantityDTO.WeightUnitDTO.KILOGRAM));
+        demonstrateDivision(
+                new QuantityDTO(1000.0, QuantityDTO.MeasurementType.VOLUME,
+                        QuantityDTO.VolumeUnitDTO.MILLILITRE),
+                new QuantityDTO(1.0, QuantityDTO.MeasurementType.VOLUME, QuantityDTO.VolumeUnitDTO.LITRE));
 
         System.out.println("\nError Cases (Testing Exceptions):");
         try {
-            demonstrateSubtraction(new Quantity<>(10.0, LengthUnit.FEET), null, null);
+            demonstrateSubtraction(
+                    new QuantityDTO(10.0, QuantityDTO.MeasurementType.LENGTH, QuantityDTO.LengthUnitDTO.FEET),
+                    null,
+                    null);
         } catch (Exception e) {
             System.out.println("Output: Throws " + e.getClass().getSimpleName());
         }
         try {
-            demonstrateDivision(new Quantity<>(10.0, LengthUnit.FEET), new Quantity<>(0.0, LengthUnit.FEET));
+            demonstrateDivision(
+                    new QuantityDTO(10.0, QuantityDTO.MeasurementType.LENGTH, QuantityDTO.LengthUnitDTO.FEET),
+                    new QuantityDTO(0.0, QuantityDTO.MeasurementType.LENGTH, QuantityDTO.LengthUnitDTO.FEET));
         } catch (Exception e) {
             System.out.println("Output: Throws " + e.getClass().getSimpleName());
         }
         try {
-            demonstrateSubtraction(new Quantity<>(10.0, LengthUnit.FEET), new Quantity<>(5.0, WeightUnit.KILOGRAM),
+            demonstrateSubtraction(
+                    new QuantityDTO(10.0, QuantityDTO.MeasurementType.LENGTH, QuantityDTO.LengthUnitDTO.FEET),
+                    new QuantityDTO(5.0, QuantityDTO.MeasurementType.WEIGHT,
+                            QuantityDTO.WeightUnitDTO.KILOGRAM),
                     null);
         } catch (Exception e) {
             System.out.println("Output: Throws " + e.getClass().getSimpleName());
         }
     }
 
-    public static void demonstrateEquality(Quantity<?> q1, Quantity<?> q2) {
+    private static void initialize() {
+        IQuantityMeasurementRepository repository = QuantityMeasurementCacheRepository.getInstance();
+        IQuantityMeasurementService service = new QuantityMeasurementServiceImpl(repository);
+        controller = new QuantityMeasurementController(service);
+    }
+
+    private static void demonstrateEqualityDTO(QuantityDTO q1, QuantityDTO q2) {
         System.out.println("Input: " + q1 + " and " + q2);
-        if (q1.equals(q2)) {
+        boolean equal = controller.performComparison(q1, q2);
+        if (equal) {
             System.out.println("Output: Equal (true)");
         } else {
             System.out.println("Output: Not Equal (false)");
         }
     }
 
-    public static <U extends IMeasurable> void demonstrateComparison(double value1, U unit1, double value2, U unit2) {
-        Quantity<U> q1 = new Quantity<>(value1, unit1);
-        Quantity<U> q2 = new Quantity<>(value2, unit2);
-        demonstrateEquality(q1, q2);
+    private static void demonstrateComparison(double value1, QuantityDTO.MeasurementType type1,
+                                              QuantityDTO.IMeasurableUnit unit1,
+                                              double value2, QuantityDTO.IMeasurableUnit unit2) {
+        QuantityDTO q1 = new QuantityDTO(value1, type1, unit1);
+        QuantityDTO q2 = new QuantityDTO(value2, type1, unit2);
+        demonstrateEqualityDTO(q1, q2);
     }
 
-    public static <U extends IMeasurable> void demonstrateLengthConversion(double value, U fromUnit, U toUnit) {
-        Quantity<U> source = new Quantity<>(value, fromUnit);
-        Quantity<U> result = source.convertTo(toUnit);
+    private static void demonstrateLengthConversion(double value, QuantityDTO.LengthUnitDTO fromUnit,
+                                                    QuantityDTO.LengthUnitDTO toUnit) {
+        QuantityDTO source = new QuantityDTO(value, QuantityDTO.MeasurementType.LENGTH, fromUnit);
+        QuantityDTO result = controller.performConversion(source, toUnit);
         System.out.println("Input: convert(" + value + ", " + fromUnit + ", " + toUnit + ")");
-        System.out.println("Output: " + ((result.getValue() == 0.0) ? "0.0"
-                : String.format("~%f", result.getValue()).replace("~12.000000", "12.0").replace("~9.000000", "9.0")
-                        .replace("~1.000000", "1.0").replace("000", "")));
-    }
-
-    public static <U extends IMeasurable> void demonstrateConversion(Quantity<U> quantity, U targetUnit) {
-        Quantity<U> result = quantity.convertTo(targetUnit);
-        System.out.println(
-                "Input: convert(" + quantity.getValue() + " " + quantity.getUnit().getUnitName() + " to "
-                        + targetUnit.getUnitName() + ")");
         System.out.println("Output: " + result.getValue());
     }
 
-    public static <U extends IMeasurable> void demonstrateAddition(Quantity<U> q1, Quantity<U> q2, U targetUnit) {
-        String targetName = (targetUnit == null) ? q1.getUnit().getUnitName() : targetUnit.getUnitName();
-        System.out.println("Input: " + q1 + ".add(" + q2 + ", " + targetName + ")");
-        Quantity<U> result = (targetUnit == null) ? q1.add(q2) : q1.add(q2, targetUnit);
-        System.out.println("Output: " + result);
+    private static void demonstrateConversion(QuantityDTO quantity, QuantityDTO.IMeasurableUnit targetUnit) {
+        QuantityDTO result = controller.performConversion(quantity, targetUnit);
+        System.out.println(
+                "Input: convert(" + quantity.getValue() + " " + quantity.getUnit() + " to " + targetUnit + ")");
+        System.out.println("Output: " + result.getValue());
     }
 
-    public static <U extends IMeasurable> void demonstrateSubtraction(Quantity<U> q1, Quantity<U> q2, U targetUnit) {
-        String targetName = (targetUnit == null) ? q1.getUnit().getUnitName() : targetUnit.getUnitName();
-        System.out.println("Input: " + q1 + ".subtract(" + q2 + (targetUnit != null ? ", " + targetName : "") + ")");
+    private static void demonstrateAddition(QuantityDTO q1, QuantityDTO q2, QuantityDTO.IMeasurableUnit targetUnit) {
+        QuantityDTO.IMeasurableUnit effectiveTarget = targetUnit != null ? targetUnit : q1.getUnit();
+        System.out.println("Input: " + q1 + ".add(" + q2 + ", " + effectiveTarget + ")");
         if (q2 == null) {
             System.out.println("Output: Throws IllegalArgumentException");
-            return;
+            throw new IllegalArgumentException("Second operand cannot be null");
         }
-        Quantity<U> result = (targetUnit == null) ? q1.subtract(q2) : q1.subtract(q2, targetUnit);
+        QuantityDTO result = controller.performAddition(q1, q2, targetUnit);
         System.out.println("Output: " + result);
     }
 
-    public static <U extends IMeasurable> void demonstrateDivision(Quantity<U> q1, Quantity<U> q2) {
-        System.out.println("Input: " + q1 + ".divide(" + q2 + ")");
-        if (q2 != null && q2.getValue() == 0.0 && q2.getUnit().supportsArithmetic()) {
-            System.out.println("Output: Throws ArithmeticException");
-            return;
+    private static void demonstrateSubtraction(QuantityDTO q1, QuantityDTO q2,
+                                               QuantityDTO.IMeasurableUnit targetUnit) {
+        QuantityDTO.IMeasurableUnit effectiveTarget = targetUnit != null ? targetUnit : q1.getUnit();
+        System.out.println("Input: " + q1 + ".subtract(" + q2 + (targetUnit != null ? ", " + effectiveTarget : "") +
+                ")");
+        if (q2 == null) {
+            System.out.println("Output: Throws IllegalArgumentException");
+            throw new IllegalArgumentException("Second operand cannot be null");
         }
-        double result = q1.divide(q2);
+        QuantityDTO result = controller.performSubtraction(q1, q2, targetUnit);
+        System.out.println("Output: " + result);
+    }
+
+    private static void demonstrateDivision(QuantityDTO q1, QuantityDTO q2) {
+        System.out.println("Input: " + q1 + ".divide(" + q2 + ")");
+        if (q2 != null && q2.getValue() == 0.0) {
+            System.out.println("Output: Throws ArithmeticException");
+            throw new ArithmeticException("Division by zero");
+        }
+        double result = controller.performDivision(q1, q2);
         System.out.println("Output: " + result);
     }
 }
+
