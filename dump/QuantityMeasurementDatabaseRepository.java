@@ -39,63 +39,65 @@ public class QuantityMeasurementDatabaseRepository implements IQuantityMeasureme
                 "result_value, result_unit, " +
                 "scalar_result, error_flag, error_message, created_at" +
                 ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
-        try (Connection conn = connectionPool.acquire();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        Connection conn = null;
+        try {
+            conn = connectionPool.acquire();
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            QuantityDTO.MeasurementType measurementType = null;
-            if (entity.getLeftOperand() != null && entity.getLeftOperand().getUnit() != null) {
-                measurementType = detectMeasurementType(entity.getLeftOperand().getUnit());
+                QuantityDTO.MeasurementType measurementType = null;
+                if (entity.getLeftOperand() != null && entity.getLeftOperand().getUnit() != null) {
+                    measurementType = detectMeasurementType(entity.getLeftOperand().getUnit());
+                }
+
+                ps.setString(1, entity.getOperationType() != null ? entity.getOperationType().name() : null);
+                ps.setString(2, measurementType != null ? measurementType.name() : null);
+
+                if (entity.getLeftOperand() != null) {
+                    ps.setDouble(3, entity.getLeftOperand().getValue());
+                    ps.setString(4, entity.getLeftOperand().getUnit() != null
+                            ? entity.getLeftOperand().getUnit().getUnitName()
+                            : null);
+                } else {
+                    ps.setObject(3, null);
+                    ps.setString(4, null);
+                }
+
+                if (entity.getRightOperand() != null) {
+                    ps.setDouble(5, entity.getRightOperand().getValue());
+                    ps.setString(6, entity.getRightOperand().getUnit() != null
+                            ? entity.getRightOperand().getUnit().getUnitName()
+                            : null);
+                } else {
+                    ps.setObject(5, null);
+                    ps.setString(6, null);
+                }
+
+                if (entity.getResultQuantity() != null) {
+                    ps.setDouble(7, entity.getResultQuantity().getValue());
+                    ps.setString(8, entity.getResultQuantity().getUnit() != null
+                            ? entity.getResultQuantity().getUnit().getUnitName()
+                            : null);
+                } else {
+                    ps.setObject(7, null);
+                    ps.setString(8, null);
+                }
+
+                if (entity.getScalarResult() != null) {
+                    ps.setDouble(9, entity.getScalarResult());
+                } else {
+                    ps.setObject(9, null);
+                }
+
+                ps.setBoolean(10, entity.hasError());
+                ps.setString(11, entity.getErrorMessage());
+                ps.setTimestamp(12, new Timestamp(System.currentTimeMillis()));
+
+                ps.executeUpdate();
             }
-
-            ps.setString(1, entity.getOperationType() != null ? entity.getOperationType().name() : null);
-            ps.setString(2, measurementType != null ? measurementType.name() : null);
-
-            if (entity.getLeftOperand() != null) {
-                ps.setDouble(3, entity.getLeftOperand().getValue());
-                ps.setString(4, entity.getLeftOperand().getUnit() != null
-                        ? entity.getLeftOperand().getUnit().getUnitName()
-                        : null);
-            } else {
-                ps.setObject(3, null);
-                ps.setString(4, null);
-            }
-
-            if (entity.getRightOperand() != null) {
-                ps.setDouble(5, entity.getRightOperand().getValue());
-                ps.setString(6, entity.getRightOperand().getUnit() != null
-                        ? entity.getRightOperand().getUnit().getUnitName()
-                        : null);
-            } else {
-                ps.setObject(5, null);
-                ps.setString(6, null);
-            }
-
-            if (entity.getResultQuantity() != null) {
-                ps.setDouble(7, entity.getResultQuantity().getValue());
-                ps.setString(8, entity.getResultQuantity().getUnit() != null
-                        ? entity.getResultQuantity().getUnit().getUnitName()
-                        : null);
-            } else {
-                ps.setObject(7, null);
-                ps.setString(8, null);
-            }
-
-            if (entity.getScalarResult() != null) {
-                ps.setDouble(9, entity.getScalarResult());
-            } else {
-                ps.setObject(9, null);
-            }
-
-            ps.setBoolean(10, entity.hasError());
-            ps.setString(11, entity.getErrorMessage());
-            ps.setTimestamp(12, new Timestamp(System.currentTimeMillis()));
-
-            ps.executeUpdate();
-
         } catch (SQLException e) {
             throw new DatabaseException("Failed to save quantity measurement entity", e);
         } finally {
-            // Connection is auto-closed by try-with-resources and returned to pool
+            connectionPool.release(conn);
         }
     }
 
@@ -123,26 +125,36 @@ public class QuantityMeasurementDatabaseRepository implements IQuantityMeasureme
     @Override
     public long getTotalCount() {
         String sql = "SELECT COUNT(*) FROM quantity_measurement";
-        try (Connection conn = connectionPool.acquire();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                return rs.getLong(1);
+        Connection conn = null;
+        try {
+            conn = connectionPool.acquire();
+            try (PreparedStatement ps = conn.prepareStatement(sql);
+                 ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getLong(1);
+                }
+                return 0L;
             }
-            return 0L;
         } catch (SQLException e) {
             throw new DatabaseException("Failed to get total count of measurements", e);
+        } finally {
+            connectionPool.release(conn);
         }
     }
 
     @Override
     public void deleteAll() {
         String sql = "DELETE FROM quantity_measurement";
-        try (Connection conn = connectionPool.acquire();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.executeUpdate();
+        Connection conn = null;
+        try {
+            conn = connectionPool.acquire();
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.executeUpdate();
+            }
         } catch (SQLException e) {
             throw new DatabaseException("Failed to delete all measurements", e);
+        } finally {
+            connectionPool.release(conn);
         }
     }
 
@@ -162,18 +174,21 @@ public class QuantityMeasurementDatabaseRepository implements IQuantityMeasureme
 
     private List<QuantityMeasurementEntity> queryEntities(String sql, StatementConfigurer configurer) {
         List<QuantityMeasurementEntity> result = new ArrayList<>();
-        try (Connection conn = connectionPool.acquire();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            configurer.configure(ps);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    result.add(mapRow(rs));
+        Connection conn = null;
+        try {
+            conn = connectionPool.acquire();
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                configurer.configure(ps);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        result.add(mapRow(rs));
+                    }
                 }
             }
         } catch (SQLException e) {
             throw new DatabaseException("Failed to query quantity measurements", e);
+        } finally {
+            connectionPool.release(conn);
         }
         return result;
     }
@@ -260,7 +275,9 @@ public class QuantityMeasurementDatabaseRepository implements IQuantityMeasureme
     }
 
     private void initializeSchema() {
-        try (Connection conn = connectionPool.acquire()) {
+        Connection conn = null;
+        try {
+            conn = connectionPool.acquire();
             String ddl = loadSchemaSql();
             if (ddl != null && !ddl.trim().isEmpty()) {
                 for (String statement : ddl.split(";")) {
@@ -274,6 +291,8 @@ public class QuantityMeasurementDatabaseRepository implements IQuantityMeasureme
             }
         } catch (SQLException e) {
             throw new DatabaseException("Failed to initialize database schema", e);
+        } finally {
+            connectionPool.release(conn);
         }
     }
 
