@@ -46,3 +46,12 @@ QuantityMeasurementApp/
     *   [Browse UC12 Implementation](https://github.com/skyy4/QuantityMeasurementApp/tree/feature/UC12-ArithmeticOperations)
     *   [Browse UC13 Implementation](https://github.com/skyy4/QuantityMeasurementApp/tree/feature/UC13-CentralizedArithmetic)
     *   [Browse UC14 Implementation](https://github.com/skyy4/QuantityMeasurementApp/tree/feature/UC14-TemperatureMeasurement)
+
+*   **12-Mar-2026 (Thursday):** Refactored the application to an **N-Tier Architecture** (UC15) by introducing distinct Controller, Service, Repository, and DTO layers. This separation of concerns improves maintainability and scalability, with `QuantityMeasurementController` driving the application flow, `IQuantityMeasurementService` defining the service contract, and `QuantityDTO` as the data transfer object between layers.
+    *   [Browse UC15 Implementation](https://github.com/skyy4/QuantityMeasurementApp/tree/feature/UC15-NTierArchitecture)
+
+*   **13-Mar-2026 (Friday):** Integrated a **JDBC Database Repository** (UC16) to persist all quantity measurement operations. Replaced the in-memory repository with `QuantityMeasurementDatabaseRepository`, introduced a `ConnectionPool` for efficient connection management, and added `ApplicationConfig` for centralised JDBC configuration. All operations (compare, convert, add, subtract, divide) are now saved to and retrieved from the database.
+    *   [Browse UC16 Implementation](https://github.com/skyy4/QuantityMeasurementApp/tree/feature/UC16-DataBaseIntegration)
+
+*   **17-Mar-2026 (Tuesday):** Migrated the application to a full **Spring Boot REST Service** (UC17) by leveraging the Spring Framework ecosystem. Replaced raw JDBC with **Spring Data JPA** (H2 in-memory database), exposed all operations as RESTful HTTP endpoints via `QuantityMeasurementController` (`/api/v1/quantities/...`), added **Spring Security** configuration, centralised exception handling with `@ControllerAdvice`, and integrated **Swagger/OpenAPI** for interactive API documentation. All 7 tests (MockMvc + Integration) pass.
+    *   [Browse UC17 Implementation](https://github.com/skyy4/QuantityMeasurementApp/tree/feature/UC17-SpringIntegration)
