@@ -55,3 +55,6 @@ QuantityMeasurementApp/
 
 *   **17-Mar-2026 (Tuesday):** Migrated the application to a full **Spring Boot REST Service** (UC17) by leveraging the Spring Framework ecosystem. Replaced raw JDBC with **Spring Data JPA** (H2 in-memory database), exposed all operations as RESTful HTTP endpoints via `QuantityMeasurementController` (`/api/v1/quantities/...`), added **Spring Security** configuration, centralised exception handling with `@ControllerAdvice`, and integrated **Swagger/OpenAPI** for interactive API documentation. All 7 tests (MockMvc + Integration) pass.
     *   [Browse UC17 Implementation](https://github.com/skyy4/QuantityMeasurementApp/tree/feature/UC17-SpringIntegration)
+
+*   **30-Mar-2026 (Monday):** Integrated **Google OAuth2** authentication and **JWT** (JSON Web Token) generation (UC18) to secure the application. Protected all REST API measurement endpoints by requiring a valid Bearer token. Implemented an `OAuth2SuccessHandler` and a `UserManagement` system targeting an H2 database via Spring Data JPA to seamlessly map Google users to local profiles. Fixed IDE lint warnings by enforcing strict null-safety checks and removed local secrets by relying on GitHub Push Protection standards.
+    *   [Browse UC18 Implementation](https://github.com/skyy4/QuantityMeasurementApp/tree/feature/UC18-google-auth-jwt-user-management)
