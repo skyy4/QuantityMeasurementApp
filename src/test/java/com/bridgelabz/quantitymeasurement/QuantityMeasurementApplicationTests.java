@@ -31,8 +31,9 @@ class QuantityMeasurementApplicationTests {
         ResponseEntity<QuantityMeasurementDTO> response = restTemplate.postForEntity("/api/v1/quantities/compare", input, QuantityMeasurementDTO.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertNotNull(response.getBody().getResultString());
+        QuantityMeasurementDTO body1 = response.getBody();
+        assertNotNull(body1);
+        assertNotNull(body1.getResultString());
     }
 
     @Test
@@ -44,8 +45,9 @@ class QuantityMeasurementApplicationTests {
         ResponseEntity<QuantityMeasurementDTO> response = restTemplate.postForEntity("/api/v1/quantities/add", input, QuantityMeasurementDTO.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertNotNull(response.getBody().getResultValue());
+        QuantityMeasurementDTO body2 = response.getBody();
+        assertNotNull(body2);
+        assertNotNull(body2.getResultValue());
     }
 
     @Test

@@ -23,13 +23,15 @@ public class QuantityMeasurementController {
     @PostMapping("/compare")
     @Operation(summary = "Compare two quantities")
     public ResponseEntity<QuantityMeasurementDTO> compareQuantities(@RequestBody QuantityInputDTO input) {
-        return new ResponseEntity<>(service.compare(input.getThisQuantityDTO(), input.getThatQuantityDTO()), HttpStatus.OK);
+        return new ResponseEntity<>(service.compare(input.getThisQuantityDTO(), input.getThatQuantityDTO()),
+                HttpStatus.OK);
     }
 
     @PostMapping("/convert")
     @Operation(summary = "Convert a quantity to a different unit")
     public ResponseEntity<QuantityMeasurementDTO> convertQuantity(@RequestBody QuantityInputDTO input) {
-        return new ResponseEntity<>(service.convert(input.getThisQuantityDTO(), input.getThisQuantityDTO().getUnit()), HttpStatus.OK);
+        return new ResponseEntity<>(service.convert(input.getThisQuantityDTO(), input.getThisQuantityDTO().getUnit()),
+                HttpStatus.OK);
     }
 
     @PostMapping("/add")
@@ -41,13 +43,15 @@ public class QuantityMeasurementController {
     @PostMapping("/subtract")
     @Operation(summary = "Subtract two quantities")
     public ResponseEntity<QuantityMeasurementDTO> subtractQuantities(@RequestBody QuantityInputDTO input) {
-        return new ResponseEntity<>(service.subtract(input.getThisQuantityDTO(), input.getThatQuantityDTO()), HttpStatus.OK);
+        return new ResponseEntity<>(service.subtract(input.getThisQuantityDTO(), input.getThatQuantityDTO()),
+                HttpStatus.OK);
     }
 
     @PostMapping("/divide")
     @Operation(summary = "Divide two quantities")
     public ResponseEntity<QuantityMeasurementDTO> divideQuantities(@RequestBody QuantityInputDTO input) {
-        return new ResponseEntity<>(service.divide(input.getThisQuantityDTO(), input.getThatQuantityDTO()), HttpStatus.OK);
+        return new ResponseEntity<>(service.divide(input.getThisQuantityDTO(), input.getThatQuantityDTO()),
+                HttpStatus.OK);
     }
 
     @GetMapping("/history/operation/{operation}")

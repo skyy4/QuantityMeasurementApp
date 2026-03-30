@@ -16,6 +16,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
+import java.util.Objects;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -48,9 +49,9 @@ public class QuantityMeasurementControllerTest {
         Mockito.when(service.compare(Mockito.any(), Mockito.any())).thenReturn(result);
 
         mockMvc.perform(post("/api/v1/quantities/compare")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(input)))
+                        .with(Objects.requireNonNull(csrf()))
+                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(input))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultString").value("true"));
     }
@@ -70,9 +71,9 @@ public class QuantityMeasurementControllerTest {
         Mockito.when(service.add(Mockito.any(), Mockito.any())).thenReturn(result);
 
         mockMvc.perform(post("/api/v1/quantities/add")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(input)))
+                        .with(Objects.requireNonNull(csrf()))
+                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(input))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultValue").value(2.0));
     }
@@ -84,6 +85,6 @@ public class QuantityMeasurementControllerTest {
 
         mockMvc.perform(get("/api/v1/quantities/history/operation/compare"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON)));
     }
 }

@@ -14,7 +14,8 @@ public class QuantityDTO {
     @NotEmpty(message = "Measurement type cannot be empty")
     private String measurementType;
 
-    public QuantityDTO() {}
+    public QuantityDTO() {
+    }
 
     public QuantityDTO(Double value, String unit, String measurementType) {
         this.value = value;
@@ -22,14 +23,29 @@ public class QuantityDTO {
         this.measurementType = measurementType;
     }
 
-    public Double getValue() { return value; }
-    public void setValue(Double value) { this.value = value; }
+    public Double getValue() {
+        return value;
+    }
 
-    public String getUnit() { return unit; }
-    public void setUnit(String unit) { this.unit = unit; }
+    public void setValue(Double value) {
+        this.value = value;
+    }
 
-    public String getMeasurementType() { return measurementType; }
-    public void setMeasurementType(String measurementType) { this.measurementType = measurementType; }
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public String getMeasurementType() {
+        return measurementType;
+    }
+
+    public void setMeasurementType(String measurementType) {
+        this.measurementType = measurementType;
+    }
 
     @Override
     public String toString() {

@@ -30,55 +30,131 @@ public class QuantityMeasurementEntity {
 
     private LocalDateTime createdAt;
 
-    public QuantityMeasurementEntity() {}
+    public QuantityMeasurementEntity() {
+    }
 
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public Double getThisValue() { return thisValue; }
-    public void setThisValue(Double thisValue) { this.thisValue = thisValue; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getThisUnit() { return thisUnit; }
-    public void setThisUnit(String thisUnit) { this.thisUnit = thisUnit; }
+    public Double getThisValue() {
+        return thisValue;
+    }
 
-    public String getThisMeasurementType() { return thisMeasurementType; }
-    public void setThisMeasurementType(String thisMeasurementType) { this.thisMeasurementType = thisMeasurementType; }
+    public void setThisValue(Double thisValue) {
+        this.thisValue = thisValue;
+    }
 
-    public Double getThatValue() { return thatValue; }
-    public void setThatValue(Double thatValue) { this.thatValue = thatValue; }
+    public String getThisUnit() {
+        return thisUnit;
+    }
 
-    public String getThatUnit() { return thatUnit; }
-    public void setThatUnit(String thatUnit) { this.thatUnit = thatUnit; }
+    public void setThisUnit(String thisUnit) {
+        this.thisUnit = thisUnit;
+    }
 
-    public String getThatMeasurementType() { return thatMeasurementType; }
-    public void setThatMeasurementType(String thatMeasurementType) { this.thatMeasurementType = thatMeasurementType; }
+    public String getThisMeasurementType() {
+        return thisMeasurementType;
+    }
 
-    public String getOperation() { return operation; }
-    public void setOperation(String operation) { this.operation = operation; }
+    public void setThisMeasurementType(String thisMeasurementType) {
+        this.thisMeasurementType = thisMeasurementType;
+    }
 
-    public String getResultString() { return resultString; }
-    public void setResultString(String resultString) { this.resultString = resultString; }
+    public Double getThatValue() {
+        return thatValue;
+    }
 
-    public Double getResultValue() { return resultValue; }
-    public void setResultValue(Double resultValue) { this.resultValue = resultValue; }
+    public void setThatValue(Double thatValue) {
+        this.thatValue = thatValue;
+    }
 
-    public String getResultUnit() { return resultUnit; }
-    public void setResultUnit(String resultUnit) { this.resultUnit = resultUnit; }
+    public String getThatUnit() {
+        return thatUnit;
+    }
 
-    public String getResultMeasurementType() { return resultMeasurementType; }
-    public void setResultMeasurementType(String resultMeasurementType) { this.resultMeasurementType = resultMeasurementType; }
+    public void setThatUnit(String thatUnit) {
+        this.thatUnit = thatUnit;
+    }
 
-    public String getErrorMessage() { return errorMessage; }
-    public void setErrorMessage(String errorMessage) { this.errorMessage = errorMessage; }
+    public String getThatMeasurementType() {
+        return thatMeasurementType;
+    }
 
-    public boolean isError() { return isError; }
-    public void setError(boolean isError) { this.isError = isError; }
+    public void setThatMeasurementType(String thatMeasurementType) {
+        this.thatMeasurementType = thatMeasurementType;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public String getOperation() {
+        return operation;
+    }
+
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
+
+    public String getResultString() {
+        return resultString;
+    }
+
+    public void setResultString(String resultString) {
+        this.resultString = resultString;
+    }
+
+    public Double getResultValue() {
+        return resultValue;
+    }
+
+    public void setResultValue(Double resultValue) {
+        this.resultValue = resultValue;
+    }
+
+    public String getResultUnit() {
+        return resultUnit;
+    }
+
+    public void setResultUnit(String resultUnit) {
+        this.resultUnit = resultUnit;
+    }
+
+    public String getResultMeasurementType() {
+        return resultMeasurementType;
+    }
+
+    public void setResultMeasurementType(String resultMeasurementType) {
+        this.resultMeasurementType = resultMeasurementType;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
+    public boolean isError() {
+        return isError;
+    }
+
+    public void setError(boolean isError) {
+        this.isError = isError;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class QuantityMeasurementServiceImpl implements IQuantityMeasurementService {
@@ -37,7 +38,7 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
             dto.setError(true);
             dto.setErrorMessage(e.getMessage());
         }
-        repository.save(dto.toEntity());
+        repository.save(Objects.requireNonNull(dto.toEntity()));
         return dto;
     }
 
@@ -61,7 +62,7 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
             dto.setError(true);
             dto.setErrorMessage(e.getMessage());
         }
-        repository.save(dto.toEntity());
+        repository.save(Objects.requireNonNull(dto.toEntity()));
         return dto;
     }
 
@@ -89,7 +90,7 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
             dto.setError(true);
             dto.setErrorMessage(e.getMessage());
         }
-        repository.save(dto.toEntity());
+        repository.save(Objects.requireNonNull(dto.toEntity()));
         return dto;
     }
 
@@ -117,7 +118,7 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
             dto.setError(true);
             dto.setErrorMessage(e.getMessage());
         }
-        repository.save(dto.toEntity());
+        repository.save(Objects.requireNonNull(dto.toEntity()));
         return dto;
     }
 
@@ -144,7 +145,7 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
             dto.setError(true);
             dto.setErrorMessage(e.getMessage());
         }
-        repository.save(dto.toEntity());
+        repository.save(Objects.requireNonNull(dto.toEntity()));
         return dto;
     }
 
@@ -175,10 +176,14 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 
     private IMeasurable mapUnit(String type, String unitName) {
         try {
-            if (type.equalsIgnoreCase("LengthUnit")) return LengthUnit.valueOf(unitName.toUpperCase());
-            if (type.equalsIgnoreCase("WeightUnit")) return WeightUnit.valueOf(unitName.toUpperCase());
-            if (type.equalsIgnoreCase("VolumeUnit")) return VolumeUnit.valueOf(unitName.toUpperCase());
-            if (type.equalsIgnoreCase("TemperatureUnit")) return TemperatureUnit.valueOf(unitName.toUpperCase());
+            if (type.equalsIgnoreCase("LengthUnit"))
+                return LengthUnit.valueOf(unitName.toUpperCase());
+            if (type.equalsIgnoreCase("WeightUnit"))
+                return WeightUnit.valueOf(unitName.toUpperCase());
+            if (type.equalsIgnoreCase("VolumeUnit"))
+                return VolumeUnit.valueOf(unitName.toUpperCase());
+            if (type.equalsIgnoreCase("TemperatureUnit"))
+                return TemperatureUnit.valueOf(unitName.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new QuantityMeasurementException("Unit must be valid for the specified measurement type");
         }
