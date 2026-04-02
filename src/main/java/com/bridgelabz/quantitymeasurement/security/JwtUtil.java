@@ -12,6 +12,7 @@ import com.bridgelabz.quantitymeasurement.user.UserEntity;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.Arrays;
 
 @Component
 public class JwtUtil {
@@ -25,8 +26,17 @@ public class JwtUtil {
     private long jwtExpirationMs;
 
     private SecretKey getSigningKey() {
-        // Use plain UTF-8 bytes to be more robust for different environments
-        return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+        byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
+        
+        // HS256 requires at least 32 bytes (256 bits).
+        // If the secret is shorter, we pad it with zeros to prevent a crash.
+        if (keyBytes.length < 32) {
+            byte[] paddedKey = new byte[32];
+            System.arraycopy(keyBytes, 0, paddedKey, 0, keyBytes.length);
+            return Keys.hmacShaKeyFor(paddedKey);
+        }
+        
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     public String generateToken(Authentication authentication) {
