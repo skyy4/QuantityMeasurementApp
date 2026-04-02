@@ -4,7 +4,6 @@ import com.bridgelabz.quantitymeasurement.dto.AuthResponseDTO;
 import com.bridgelabz.quantitymeasurement.dto.LoginRequestDTO;
 import com.bridgelabz.quantitymeasurement.dto.RegisterRequestDTO;
 import com.bridgelabz.quantitymeasurement.security.JwtUtil;
-import com.bridgelabz.quantitymeasurement.user.AuthProvider;
 import com.bridgelabz.quantitymeasurement.user.UserEntity;
 import com.bridgelabz.quantitymeasurement.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-@Tag(name = "Authentication", description = "Local + Google OAuth2 Auth endpoints")
+@Tag(name = "Authentication", description = "JWT Authentication endpoints")
 public class AuthController {
 
     @Autowired
@@ -38,7 +37,7 @@ public class AuthController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
-    @Operation(summary = "Register a new local user")
+    @Operation(summary = "Register a new user")
     public ResponseEntity<AuthResponseDTO> register(@Valid @RequestBody RegisterRequestDTO request) {
         if (userService.existsByEmail(request.getEmail())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
@@ -48,14 +47,12 @@ public class AuthController {
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setProvider(AuthProvider.LOCAL);
         userService.saveUser(user);
 
         String token = jwtUtil.generateTokenFromEmail(user.getEmail());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                new AuthResponseDTO(token, user.getEmail(), user.getName(),
-                        user.getRole().name(), user.getImageUrl())
+                new AuthResponseDTO(token, user.getEmail(), user.getName(), user.getRole().name())
         );
     }
 
@@ -72,8 +69,7 @@ public class AuthController {
         UserEntity user = (UserEntity) authentication.getPrincipal();
 
         return ResponseEntity.ok(
-                new AuthResponseDTO(token, user.getEmail(), user.getName(),
-                        user.getRole().name(), user.getImageUrl())
+                new AuthResponseDTO(token, user.getEmail(), user.getName(), user.getRole().name())
         );
     }
 
@@ -83,8 +79,7 @@ public class AuthController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = (UserEntity) authentication.getPrincipal();
         return ResponseEntity.ok(
-                new AuthResponseDTO(null, user.getEmail(), user.getName(),
-                        user.getRole().name(), user.getImageUrl())
+                new AuthResponseDTO(null, user.getEmail(), user.getName(), user.getRole().name())
         );
     }
 }

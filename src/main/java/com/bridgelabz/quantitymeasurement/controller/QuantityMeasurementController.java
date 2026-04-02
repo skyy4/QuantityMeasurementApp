@@ -30,7 +30,7 @@ public class QuantityMeasurementController {
     @PostMapping("/convert")
     @Operation(summary = "Convert a quantity to a different unit")
     public ResponseEntity<QuantityMeasurementDTO> convertQuantity(@RequestBody QuantityInputDTO input) {
-        return new ResponseEntity<>(service.convert(input.getThisQuantityDTO(), input.getThisQuantityDTO().getUnit()),
+        return new ResponseEntity<>(service.convert(input.getThisQuantityDTO(), input.getThatQuantityDTO().getUnit()),
                 HttpStatus.OK);
     }
 

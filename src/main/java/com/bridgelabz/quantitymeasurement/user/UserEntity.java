@@ -18,25 +18,18 @@ public class UserEntity implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String name;
 
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role = UserRole.ROLE_USER;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private AuthProvider provider = AuthProvider.LOCAL;
-
-    private String providerId;
-
-    private String imageUrl;
 
     private boolean enabled = true;
 
@@ -73,24 +66,16 @@ public class UserEntity implements UserDetails {
     }
 
     @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+    public boolean isAccountNonExpired() { return true; }
 
     @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+    public boolean isAccountNonLocked() { return true; }
 
     @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+    public boolean isCredentialsNonExpired() { return true; }
 
     @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
+    public boolean isEnabled() { return enabled; }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -105,15 +90,6 @@ public class UserEntity implements UserDetails {
 
     public UserRole getRole() { return role; }
     public void setRole(UserRole role) { this.role = role; }
-
-    public AuthProvider getProvider() { return provider; }
-    public void setProvider(AuthProvider provider) { this.provider = provider; }
-
-    public String getProviderId() { return providerId; }
-    public void setProviderId(String providerId) { this.providerId = providerId; }
-
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
     public void setEnabled(boolean enabled) { this.enabled = enabled; }
 
