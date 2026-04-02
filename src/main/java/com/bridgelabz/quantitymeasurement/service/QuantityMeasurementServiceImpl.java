@@ -176,16 +176,17 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 
     private IMeasurable mapUnit(String type, String unitName) {
         try {
-            if (type.equalsIgnoreCase("LengthUnit"))
+            String upperType = type.toUpperCase();
+            if (upperType.equals("LENGTH") || upperType.equals("LENGTHUNIT"))
                 return LengthUnit.valueOf(unitName.toUpperCase());
-            if (type.equalsIgnoreCase("WeightUnit"))
+            if (upperType.equals("WEIGHT") || upperType.equals("WEIGHTUNIT"))
                 return WeightUnit.valueOf(unitName.toUpperCase());
-            if (type.equalsIgnoreCase("VolumeUnit"))
+            if (upperType.equals("VOLUME") || upperType.equals("VOLUMEUNIT"))
                 return VolumeUnit.valueOf(unitName.toUpperCase());
-            if (type.equalsIgnoreCase("TemperatureUnit"))
+            if (upperType.equals("TEMPERATURE") || upperType.equals("TEMPERATUREUNIT"))
                 return TemperatureUnit.valueOf(unitName.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new QuantityMeasurementException("Unit must be valid for the specified measurement type");
+            throw new QuantityMeasurementException("Unit '" + unitName + "' is invalid for " + type);
         }
         throw new QuantityMeasurementException("Unsupported measurement type: " + type);
     }
