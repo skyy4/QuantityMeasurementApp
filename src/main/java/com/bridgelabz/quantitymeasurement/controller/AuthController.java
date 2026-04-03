@@ -52,7 +52,7 @@ public class AuthController {
         String token = jwtUtil.generateTokenFromEmail(user.getEmail());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                new AuthResponseDTO(token, user.getEmail(), user.getName(), user.getRole().name())
+                new AuthResponseDTO(token, user.getName(), user.getEmail(), user.getRole().name())
         );
     }
 
@@ -69,7 +69,7 @@ public class AuthController {
         UserEntity user = (UserEntity) authentication.getPrincipal();
 
         return ResponseEntity.ok(
-                new AuthResponseDTO(token, user.getEmail(), user.getName(), user.getRole().name())
+                new AuthResponseDTO(token, user.getName(), user.getEmail(), user.getRole().name())
         );
     }
 
@@ -79,7 +79,7 @@ public class AuthController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = (UserEntity) authentication.getPrincipal();
         return ResponseEntity.ok(
-                new AuthResponseDTO(null, user.getEmail(), user.getName(), user.getRole().name())
+                new AuthResponseDTO(null, user.getName(), user.getEmail(), user.getRole().name())
         );
     }
 }

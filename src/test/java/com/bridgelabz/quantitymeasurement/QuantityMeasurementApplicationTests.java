@@ -86,7 +86,7 @@ class QuantityMeasurementApplicationTests {
                             .content(Objects.requireNonNull(objectMapper.writeValueAsString(input))))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.error").value(true))
-                    .andExpect(jsonPath("$.errorMessage").value("Unit must be valid for the specified measurement type"));
+                    .andExpect(jsonPath("$.errorMessage").value("Unit 'INVALID_UNIT' is invalid for LengthUnit"));
         } catch (Exception e) {
             throw new AssertionError(e);
         }
