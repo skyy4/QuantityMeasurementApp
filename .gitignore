@@ -1,2 +1,7 @@
 
 target/
+data/
+*.db
+*.mv.db
+*.lock.db
+*.trace.db
