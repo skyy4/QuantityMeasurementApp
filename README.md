@@ -2,44 +2,6 @@
 
 This log documents the daily progress of tasks completed during the Quantity Measurement App development, identifying work done on each date with thematic headings and detailed summaries.
 
-## Render PostgreSQL Setup
-
-Use PostgreSQL on Render for deployment. H2 is fine for local development, but it is not reliable for persistent production data on Render.
-
-### Backend behavior in this repo
-
-- Local development falls back to H2 automatically.
-- Production can use PostgreSQL by setting Spring datasource environment variables.
-- `spring.jpa.hibernate.ddl-auto` defaults to `update`, so user data is not recreated on every restart.
-
-### Render steps
-
-1. Create a new PostgreSQL database in Render.
-2. Open your backend service in Render.
-3. Add these environment variables to the backend service:
-
-```env
-SPRING_DATASOURCE_URL=jdbc:postgresql://<HOST>:<PORT>/<DATABASE>
-SPRING_DATASOURCE_USERNAME=<USERNAME>
-SPRING_DATASOURCE_PASSWORD=<PASSWORD>
-SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
-SPRING_JPA_HIBERNATE_DDL_AUTO=update
-APP_CORS_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000,https://qma-frontend.onrender.com
-SPRING_H2_CONSOLE_ENABLED=false
-```
-
-4. Redeploy the backend service.
-
-### Important
-
-- Do not use Render's plain `postgres://...` URL directly in `SPRING_DATASOURCE_URL`.
-- Spring expects a JDBC URL, so it must start with `jdbc:postgresql://...`
-- If Render shows separate host, port, database, username, and password fields, build the URL from those values.
-
-### Local development
-
-No extra setup is required locally. If the PostgreSQL environment variables are not set, the app uses the local H2 database file automatically.
-
 ## Folder Structure
 
 The repository is organized in a modular way following the standard Maven directory structure.
