@@ -20,16 +20,19 @@ spring:
             allowCredentials: true
       routes:
         - id: auth-service-route
-          uri: lb://auth-service
+          uri: ${AUTH_SERVICE_URI:lb://auth-service}
           predicates:
             - Path=/api/auth/**,/api/users/**
         - id: qma-service-route
-          uri: lb://qma-service
+          uri: ${QMA_SERVICE_URI:lb://qma-service}
           predicates:
             - Path=/api/v1/quantities/**,/api/v1/history/**
 
 eureka:
   client:
+    enabled: ${EUREKA_CLIENT_ENABLED:true}
+    register-with-eureka: ${EUREKA_CLIENT_ENABLED:true}
+    fetch-registry: ${EUREKA_CLIENT_ENABLED:true}
     service-url:
       defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
   instance:

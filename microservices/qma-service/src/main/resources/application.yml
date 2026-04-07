@@ -27,7 +27,7 @@ spring:
       password: ${SPRING_DATA_REDIS_PASSWORD:}
       timeout: 2s
   cache:
-    type: redis
+    type: ${SPRING_CACHE_TYPE:redis}
 
 app:
   jwt:
@@ -40,6 +40,9 @@ app:
 
 eureka:
   client:
+    enabled: ${EUREKA_CLIENT_ENABLED:true}
+    register-with-eureka: ${EUREKA_CLIENT_ENABLED:true}
+    fetch-registry: ${EUREKA_CLIENT_ENABLED:true}
     service-url:
       defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
   instance:

@@ -77,17 +77,27 @@ mvn clean package -DskipTests
 
 ## Railway deployment
 
-Create separate Railway services for:
+Create separate Railway services for the cheapest deploy path:
 
-1. `eureka-server`
-2. `auth-service`
-3. `qma-service`
-4. `api-gateway`
-5. Redis
-6. Postgres for auth
-7. Postgres for qma
+1. `auth-service`
+2. `qma-service`
+3. `api-gateway`
+4. Postgres for auth
+5. Postgres for qma
 
-Recommended deployment order:
+Optional for the full architecture:
+
+6. `eureka-server`
+7. Redis
+
+Recommended deployment order for the cheapest deploy:
+
+1. Auth
+2. QMA
+3. Gateway
+4. Frontend
+
+Recommended deployment order for the full architecture:
 
 1. Eureka
 2. Auth
@@ -108,16 +118,19 @@ For `auth-service`:
 
 - Build: `cd microservices && mvn -pl auth-service -am package -DskipTests`
 - Start: `cd microservices && java -jar auth-service/target/auth-service-1.0-SNAPSHOT.jar`
+- Dockerfile path (Render): `microservices/auth-service/Dockerfile`
 
 For `qma-service`:
 
 - Build: `cd microservices && mvn -pl qma-service -am package -DskipTests`
 - Start: `cd microservices && java -jar qma-service/target/qma-service-1.0-SNAPSHOT.jar`
+- Dockerfile path (Render): `microservices/qma-service/Dockerfile`
 
 For `api-gateway`:
 
 - Build: `cd microservices && mvn -pl api-gateway -am package -DskipTests`
 - Start: `cd microservices && java -jar api-gateway/target/api-gateway-1.0-SNAPSHOT.jar`
+- Dockerfile path (Render): `microservices/api-gateway/Dockerfile`
 
 ### Required env vars
 
@@ -125,7 +138,7 @@ Set these on `auth-service` and `qma-service`:
 
 - `APP_JWT_SECRET`
 - `APP_CORS_ALLOWED_ORIGINS`
-- `EUREKA_CLIENT_SERVICEURL_DEFAULTZONE`
+- `EUREKA_CLIENT_ENABLED=false`
 
 Set these on `auth-service`:
 
@@ -142,6 +155,11 @@ Set these on `qma-service`:
 - `SPRING_DATASOURCE_PASSWORD`
 - `SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver`
 - `SPRING_JPA_HIBERNATE_DDL_AUTO=update`
+- `SPRING_CACHE_TYPE=simple`
+
+If you also deploy Redis, then use:
+
+- `SPRING_CACHE_TYPE=redis`
 - `SPRING_DATA_REDIS_HOST`
 - `SPRING_DATA_REDIS_PORT`
 - `SPRING_DATA_REDIS_PASSWORD` if Railway Redis requires it
@@ -150,12 +168,19 @@ Set these on `qma-service`:
 
 Set these on `api-gateway`:
 
-- `EUREKA_CLIENT_SERVICEURL_DEFAULTZONE`
+- `EUREKA_CLIENT_ENABLED=false`
 - `APP_CORS_ALLOWED_ORIGIN_PATTERNS`
+- `AUTH_SERVICE_URI=<public auth-service URL>`
+- `QMA_SERVICE_URI=<public qma-service URL>`
 
 Set this on all deployed services where Railway provides dynamic ports:
 
 - `SERVER_PORT=${PORT}`
+
+If you deploy the full Eureka setup later, replace those direct URIs with:
+
+- `EUREKA_CLIENT_ENABLED=true`
+- `EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=<your eureka URL>/eureka/`
 
 ### Railway URL notes
 
@@ -175,3 +200,4 @@ VITE_API_BASE_URL=https://your-api-gateway-production.up.railway.app
 - Quantity history is user-scoped in `qma-service`.
 - Result caching is handled manually through Redis so history is still persisted even on cache hits.
 - History query caching uses Spring Cache with Redis.
+- For a low-cost Railway demo, Eureka and Redis can be disabled by env vars while keeping the full architecture in source.
