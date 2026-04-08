@@ -9,7 +9,7 @@ spring:
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOriginPatterns: ${APP_CORS_ALLOWED_ORIGIN_PATTERNS:${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000,https://*.railway.app,https://qma-frontend.onrender.com}}
+            allowedOriginPatterns: ${APP_CORS_ALLOWED_ORIGIN_PATTERNS:${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000,https://*.railway.app,https://*.onrender.com}}
             allowedMethods:
               - GET
               - POST
@@ -17,7 +17,7 @@ spring:
               - DELETE
               - OPTIONS
             allowedHeaders: "*"
-            allowCredentials: true
+            allowCredentials: ${APP_CORS_ALLOW_CREDENTIALS:false}
       routes:
         - id: auth-service-route
           uri: ${AUTH_SERVICE_URI:lb://auth-service}
