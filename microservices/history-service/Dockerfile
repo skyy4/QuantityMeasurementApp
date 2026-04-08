@@ -8,7 +8,7 @@ RUN mvn package -DskipTests
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 
-COPY --from=build /app/target/qma-service-1.0-SNAPSHOT.jar app.jar
+COPY --from=build /app/target/history-service-1.0-SNAPSHOT.jar app.jar
 
 EXPOSE 10000
 

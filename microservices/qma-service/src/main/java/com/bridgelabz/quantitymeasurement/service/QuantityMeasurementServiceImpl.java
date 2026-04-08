@@ -3,31 +3,23 @@ package com.bridgelabz.quantitymeasurement.service;
 import com.bridgelabz.quantitymeasurement.*;
 import com.bridgelabz.quantitymeasurement.dto.QuantityDTO;
 import com.bridgelabz.quantitymeasurement.dto.QuantityMeasurementDTO;
-import com.bridgelabz.quantitymeasurement.repository.QuantityMeasurementRepository;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class QuantityMeasurementServiceImpl implements IQuantityMeasurementService {
 
-    private final QuantityMeasurementRepository repository;
     private final ResultCacheService resultCacheService;
+    private final HistoryServiceClient historyServiceClient;
 
     public QuantityMeasurementServiceImpl(
-            QuantityMeasurementRepository repository,
-            ResultCacheService resultCacheService
+            ResultCacheService resultCacheService,
+            HistoryServiceClient historyServiceClient
     ) {
-        this.repository = repository;
         this.resultCacheService = resultCacheService;
+        this.historyServiceClient = historyServiceClient;
     }
 
     @Override
-    @CacheEvict(cacheNames = "history", allEntries = true)
     public QuantityMeasurementDTO compare(Long userId, String userEmail, QuantityDTO first, QuantityDTO second) {
         String cacheKey = CacheKeyFactory.operationKey(userId, "compare", first, second, null);
         QuantityMeasurementDTO dto = resultCacheService.get(cacheKey)
@@ -53,7 +45,6 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
     }
 
     @Override
-    @CacheEvict(cacheNames = "history", allEntries = true)
     public QuantityMeasurementDTO convert(Long userId, String userEmail, QuantityDTO source, String targetUnit) {
         String cacheKey = CacheKeyFactory.operationKey(userId, "convert", source, null, targetUnit);
         QuantityMeasurementDTO dto = resultCacheService.get(cacheKey)
@@ -80,19 +71,16 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
     }
 
     @Override
-    @CacheEvict(cacheNames = "history", allEntries = true)
     public QuantityMeasurementDTO add(Long userId, String userEmail, QuantityDTO first, QuantityDTO second) {
         return computeArithmetic(userId, userEmail, "add", first, second);
     }
 
     @Override
-    @CacheEvict(cacheNames = "history", allEntries = true)
     public QuantityMeasurementDTO subtract(Long userId, String userEmail, QuantityDTO first, QuantityDTO second) {
         return computeArithmetic(userId, userEmail, "subtract", first, second);
     }
 
     @Override
-    @CacheEvict(cacheNames = "history", allEntries = true)
     public QuantityMeasurementDTO divide(Long userId, String userEmail, QuantityDTO first, QuantityDTO second) {
         String cacheKey = CacheKeyFactory.operationKey(userId, "divide", first, second, null);
         QuantityMeasurementDTO dto = resultCacheService.get(cacheKey)
@@ -116,39 +104,6 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
                 });
 
         return persistForUser(dto, userId, userEmail);
-    }
-
-    @Override
-    @Cacheable(cacheNames = "history", key = "T(com.bridgelabz.quantitymeasurement.service.CacheKeyFactory).historyKey(#userId, null, null, false)")
-    public List<QuantityMeasurementDTO> getAllHistory(Long userId) {
-        return QuantityMeasurementDTO.fromEntityList(repository.findByUserIdOrderByCreatedAtDesc(userId));
-    }
-
-    @Override
-    @Cacheable(cacheNames = "history", key = "T(com.bridgelabz.quantitymeasurement.service.CacheKeyFactory).historyKey(#userId, #operation, null, false)")
-    public List<QuantityMeasurementDTO> getOperationHistory(Long userId, String operation) {
-        return QuantityMeasurementDTO.fromEntityList(
-                repository.findByUserIdAndOperationOrderByCreatedAtDesc(userId, operation)
-        );
-    }
-
-    @Override
-    @Cacheable(cacheNames = "history", key = "T(com.bridgelabz.quantitymeasurement.service.CacheKeyFactory).historyKey(#userId, null, #measurementType, false)")
-    public List<QuantityMeasurementDTO> getMeasurementsByType(Long userId, String measurementType) {
-        return QuantityMeasurementDTO.fromEntityList(
-                repository.findByUserIdAndThisMeasurementTypeOrderByCreatedAtDesc(userId, measurementType)
-        );
-    }
-
-    @Override
-    public long getOperationCount(Long userId, String operation) {
-        return repository.countByUserIdAndOperationAndIsErrorFalse(userId, operation);
-    }
-
-    @Override
-    @Cacheable(cacheNames = "history", key = "T(com.bridgelabz.quantitymeasurement.service.CacheKeyFactory).historyKey(#userId, null, null, true)")
-    public List<QuantityMeasurementDTO> getErrorHistory(Long userId) {
-        return QuantityMeasurementDTO.fromEntityList(repository.findByUserIdAndIsErrorTrueOrderByCreatedAtDesc(userId));
     }
 
     private QuantityMeasurementDTO computeArithmetic(
@@ -205,7 +160,8 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
         QuantityMeasurementDTO copy = copyDto(dto);
         copy.setUserId(userId);
         copy.setUserEmail(userEmail);
-        return QuantityMeasurementDTO.fromEntity(repository.save(Objects.requireNonNull(copy.toEntity())));
+        historyServiceClient.saveHistory(copy);
+        return copy;
     }
 
     private QuantityMeasurementDTO copyDto(QuantityMeasurementDTO dto) {

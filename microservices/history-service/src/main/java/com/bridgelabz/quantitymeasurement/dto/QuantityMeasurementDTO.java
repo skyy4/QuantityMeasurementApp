@@ -1,6 +1,10 @@
 package com.bridgelabz.quantitymeasurement.dto;
 
+import com.bridgelabz.quantitymeasurement.model.QuantityMeasurementEntity;
+
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class QuantityMeasurementDTO {
 
@@ -26,6 +30,56 @@ public class QuantityMeasurementDTO {
     private LocalDateTime createdAt;
 
     public QuantityMeasurementDTO() {}
+
+    public static QuantityMeasurementDTO fromEntity(QuantityMeasurementEntity entity) {
+        QuantityMeasurementDTO dto = new QuantityMeasurementDTO();
+        dto.id = entity.getId();
+        dto.userId = entity.getUserId();
+        dto.userEmail = entity.getUserEmail();
+        dto.thisValue = entity.getThisValue();
+        dto.thisUnit = entity.getThisUnit();
+        dto.thisMeasurementType = entity.getThisMeasurementType();
+        dto.thatValue = entity.getThatValue();
+        dto.thatUnit = entity.getThatUnit();
+        dto.thatMeasurementType = entity.getThatMeasurementType();
+        dto.operation = entity.getOperation();
+        dto.resultString = entity.getResultString();
+        dto.resultValue = entity.getResultValue();
+        dto.resultUnit = entity.getResultUnit();
+        dto.resultMeasurementType = entity.getResultMeasurementType();
+        dto.errorMessage = entity.getErrorMessage();
+        dto.error = entity.isError();
+        dto.createdAt = entity.getCreatedAt();
+        return dto;
+    }
+
+    public static List<QuantityMeasurementDTO> fromEntityList(List<QuantityMeasurementEntity> entities) {
+        return entities.stream()
+                .map(QuantityMeasurementDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    public QuantityMeasurementEntity toEntity() {
+        QuantityMeasurementEntity entity = new QuantityMeasurementEntity();
+        entity.setId(this.id);
+        entity.setUserId(this.userId);
+        entity.setUserEmail(this.userEmail);
+        entity.setThisValue(this.thisValue);
+        entity.setThisUnit(this.thisUnit);
+        entity.setThisMeasurementType(this.thisMeasurementType);
+        entity.setThatValue(this.thatValue);
+        entity.setThatUnit(this.thatUnit);
+        entity.setThatMeasurementType(this.thatMeasurementType);
+        entity.setOperation(this.operation);
+        entity.setResultString(this.resultString);
+        entity.setResultValue(this.resultValue);
+        entity.setResultUnit(this.resultUnit);
+        entity.setResultMeasurementType(this.resultMeasurementType);
+        entity.setErrorMessage(this.errorMessage);
+        entity.setError(this.error);
+        entity.setCreatedAt(this.createdAt);
+        return entity;
+    }
 
     // Getters
     public Long getId() { return id; }

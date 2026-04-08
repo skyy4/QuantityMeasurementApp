@@ -14,14 +14,4 @@ public interface IQuantityMeasurementService {
     QuantityMeasurementDTO subtract(Long userId, String userEmail, QuantityDTO first, QuantityDTO second);
 
     QuantityMeasurementDTO divide(Long userId, String userEmail, QuantityDTO first, QuantityDTO second);
-
-    List<QuantityMeasurementDTO> getAllHistory(Long userId);
-
-    List<QuantityMeasurementDTO> getOperationHistory(Long userId, String operation);
-
-    List<QuantityMeasurementDTO> getMeasurementsByType(Long userId, String measurementType);
-
-    long getOperationCount(Long userId, String operation);
-
-    List<QuantityMeasurementDTO> getErrorHistory(Long userId);
 }

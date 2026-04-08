@@ -20,6 +20,7 @@
         <module>api-gateway</module>
         <module>auth-service</module>
         <module>qma-service</module>
+        <module>history-service</module>
     </modules>
 
     <properties>
