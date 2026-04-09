@@ -19,19 +19,22 @@ spring:
               - OPTIONS
             allowedHeaders: "*"
             allowCredentials: true
+      # Discovery locator disabled — we use explicit routes + env var URIs
+      discovery:
+        locator:
+          enabled: false
       routes:
-        # AUTH_SERVICE_URI must be set on Railway if auth-service is hosted on Render
-        # e.g. AUTH_SERVICE_URI=https://your-auth-service.onrender.com
+        # Set AUTH_SERVICE_URI=https://<your-auth-service>.onrender.com on Railway
         - id: auth-service-route
           uri: ${AUTH_SERVICE_URI:lb://auth-service}
           predicates:
             - Path=/api/auth/**,/api/users/**
+        # Set QMA_SERVICE_URI to the Railway-internal or public URL of qma-service
         - id: qma-service-route
           uri: ${QMA_SERVICE_URI:lb://qma-service}
           predicates:
             - Path=/api/v1/quantities/**
-        # HISTORY_SERVICE_URI must be set on Railway if history-service is hosted on Render
-        # e.g. HISTORY_SERVICE_URI=https://your-history-service.onrender.com
+        # Set HISTORY_SERVICE_URI=https://<your-history-service>.onrender.com on Railway
         - id: history-service-route
           uri: ${HISTORY_SERVICE_URI:lb://history-service}
           predicates:
@@ -39,16 +42,25 @@ spring:
 
 eureka:
   client:
+    # Set EUREKA_CLIENT_ENABLED=false on Railway to skip Eureka entirely
     enabled: ${EUREKA_CLIENT_ENABLED:true}
     register-with-eureka: ${EUREKA_CLIENT_ENABLED:true}
     fetch-registry: ${EUREKA_CLIENT_ENABLED:true}
+    initial-instance-info-replication-interval-seconds: 5
+    registry-fetch-interval-seconds: 5
     service-url:
       defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
   instance:
     prefer-ip-address: true
+    # Shorten lease intervals so Eureka failures don't hold up startup
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
 
 management:
   endpoints:
     web:
       exposure:
         include: health,info,gateway
+  endpoint:
+    health:
+      show-details: always
