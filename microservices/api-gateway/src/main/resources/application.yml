@@ -1,5 +1,5 @@
 server:
-  port: ${PORT:${SERVER_PORT:8080}}
+  port: ${PORT:8080}
 
 spring:
   application:
@@ -22,18 +22,21 @@ spring:
       discovery:
         locator:
           enabled: false
+      # Strip duplicate CORS headers that downstream services may add
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_FIRST
       routes:
-        # AUTH_SERVICE_URI → Render URL e.g. https://auth-service-xxxx.onrender.com
+        # AUTH_SERVICE_URI → Render URL e.g. https://qma-auth-service.onrender.com
         - id: auth-service-route
           uri: ${AUTH_SERVICE_URI:http://localhost:8081}
           predicates:
             - Path=/api/auth/**,/api/users/**
-        # QMA_SERVICE_URI → Railway internal/public URL of qma-service
+        # QMA_SERVICE_URI → Railway public URL of qma-service
         - id: qma-service-route
           uri: ${QMA_SERVICE_URI:http://localhost:8082}
           predicates:
             - Path=/api/v1/quantities/**
-        # HISTORY_SERVICE_URI → Render URL e.g. https://history-service-xxxx.onrender.com
+        # HISTORY_SERVICE_URI → Render URL e.g. https://history-service-0k2e.onrender.com
         - id: history-service-route
           uri: ${HISTORY_SERVICE_URI:http://localhost:8083}
           predicates:
