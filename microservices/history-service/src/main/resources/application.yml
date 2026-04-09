@@ -24,7 +24,7 @@ app:
   jwt:
     secret: ${APP_JWT_SECRET:change-this-secret-key-for-railway-deployment-please-1234567890}
   cors:
-    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000,https://*.railway.app,https://qma-frontend.onrender.com}
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000,https://*.railway.app,https://quantitymeasurementapp-frontend-s49x.onrender.com}
   internal:
     api-key: ${HISTORY_SERVICE_API_KEY:history-service-local-key}
 
