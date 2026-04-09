@@ -10,7 +10,7 @@ spring:
         add-to-simple-url-handler-mapping: true
         cors-configurations:
           '[/**]':
-            allowedOriginPatterns: ${APP_CORS_ALLOWED_ORIGIN_PATTERNS:${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000,https://*.railway.app,https://*.onrender.com}}
+            allowedOriginPatterns: ${APP_CORS_ALLOWED_ORIGIN_PATTERNS:http://localhost:5173,http://localhost:3000,https://*.railway.app,https://*.onrender.com}
             allowedMethods:
               - GET
               - POST
@@ -18,8 +18,10 @@ spring:
               - DELETE
               - OPTIONS
             allowedHeaders: "*"
-            allowCredentials: ${APP_CORS_ALLOW_CREDENTIALS:false}
+            allowCredentials: true
       routes:
+        # AUTH_SERVICE_URI must be set on Railway if auth-service is hosted on Render
+        # e.g. AUTH_SERVICE_URI=https://your-auth-service.onrender.com
         - id: auth-service-route
           uri: ${AUTH_SERVICE_URI:lb://auth-service}
           predicates:
@@ -28,6 +30,8 @@ spring:
           uri: ${QMA_SERVICE_URI:lb://qma-service}
           predicates:
             - Path=/api/v1/quantities/**
+        # HISTORY_SERVICE_URI must be set on Railway if history-service is hosted on Render
+        # e.g. HISTORY_SERVICE_URI=https://your-history-service.onrender.com
         - id: history-service-route
           uri: ${HISTORY_SERVICE_URI:lb://history-service}
           predicates:
