@@ -1,17 +1,5 @@
 # QuantityMeasurementApp
 
-## Repository Links
-
-- Backend/Core/Microservices (this repo): [https://github.com/skyy4/QuantityMeasurementApp](https://github.com/skyy4/QuantityMeasurementApp)
-- Frontend (UC19 & UC20): [https://github.com/skyy4/QuantityMeasurementApp-Frontend](https://github.com/skyy4/QuantityMeasurementApp-Frontend)
-
-## Actual UC Flow (Final Approved Flow)
-
-1. UC1-UC18 were completed in this repository.
-2. UC19 and UC20 were completed in the separate frontend repository.
-3. UC21 (Microservices) was completed directly in this repository.
-4. UC22 (CI/CD + Cloud Deployment) was completed using JWT auth flow in deployment (without Google OAuth in deployment setup), as approved by mentor.
-
 This log documents the daily progress of tasks completed during the Quantity Measurement App development, identifying work done on each date with thematic headings and detailed summaries.
 
 ## Folder Structure
@@ -26,8 +14,6 @@ QuantityMeasurementApp/
 +-- src/main/java (Application Code)
 |
 +-- src/test/java (Test Cases)
-|
-+-- microservices (UC21)
 |
 +-- pom.xml (Maven Configuration)
 |
@@ -70,17 +56,17 @@ QuantityMeasurementApp/
 *   **17-Mar-2026 (Tuesday):** Migrated the application to a full **Spring Boot REST Service** (UC17) by leveraging the Spring Framework ecosystem. Replaced raw JDBC with **Spring Data JPA** (H2 in-memory database), exposed all operations as RESTful HTTP endpoints via `QuantityMeasurementController` (`/api/v1/quantities/...`), added **Spring Security** configuration, centralised exception handling with `@ControllerAdvice`, and integrated **Swagger/OpenAPI** for interactive API documentation. All 7 tests (MockMvc + Integration) pass.
     *   [Browse UC17 Implementation](https://github.com/skyy4/QuantityMeasurementApp/tree/feature/UC17-SpringIntegration)
 
-*   **30-Mar-2026 (Monday):** Integrated authentication and user management for UC18 branch work. The UC18 feature branch contains Google OAuth2 + JWT exploration, while final approved deployment flow uses JWT authentication.
+*   **30-Mar-2026 (Monday):** Integrated **Google OAuth2** authentication and **JWT** (JSON Web Token) generation (UC18) to secure the application. Protected all REST API measurement endpoints by requiring a valid Bearer token. Implemented an `OAuth2SuccessHandler` and a `UserManagement` system targeting an H2 database via Spring Data JPA to seamlessly map Google users to local profiles. Fixed IDE lint warnings by enforcing strict null-safety checks and removed local secrets by relying on GitHub Push Protection standards.
     *   [Browse UC18 Implementation](https://github.com/skyy4/QuantityMeasurementApp/tree/feature/UC18-google-auth-jwt-user-management)
 
-## Frontend + Microservices + Deployment Continuation
+## Project Continuation After UC18 (Approved Flow)
 
-*   **UC19-UC20 (Frontend):** Implemented in separate repository.
+*   **UC19-UC20 (Frontend):** Implemented in separate repository as approved.
     *   [Frontend Repository](https://github.com/skyy4/QuantityMeasurementApp-Frontend)
     *   [UC19 branch (html-css-js)](https://github.com/skyy4/QuantityMeasurementApp-Frontend/tree/html-css-js)
     *   [UC20 branch (react)](https://github.com/skyy4/QuantityMeasurementApp-Frontend/tree/react)
 
-*   **UC21 (Microservices):** Implemented directly in this repository under `microservices/`.
+*   **UC21 (Microservices Architecture):** Implemented directly in this repository under `microservices/`.
     *   [Microservices Folder](https://github.com/skyy4/QuantityMeasurementApp/tree/main/microservices)
 
-*   **UC22 (CI/CD + Cloud Deployment):** Implemented and validated with Docker/Jenkins/cloud deployment flow using JWT auth setup.
+*   **UC22 (CI/CD + Cloud Deployment):** Implemented and validated with Docker/Jenkins/cloud deployment flow. Final deployment auth flow uses JWT (without Google OAuth in deployment), and this is mentor-approved.
