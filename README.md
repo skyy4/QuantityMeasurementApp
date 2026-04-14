@@ -69,4 +69,4 @@ QuantityMeasurementApp/
 *   **UC21 (Microservices Architecture):** Implemented directly in this repository under `microservices/`.
     *   [Microservices Folder](https://github.com/skyy4/QuantityMeasurementApp/tree/main/microservices)
 
-*   **UC22 (CI/CD + Cloud Deployment):** Implemented and validated with Docker/Jenkins/cloud deployment flow. Final deployment auth flow uses JWT (without Google OAuth in deployment), and this is mentor-approved.
+*   **UC22 (CI/CD + Cloud Deployment):** Implemented and validated with Docker/Jenkins/cloud deployment flow. Final deployment auth flow uses JWT.
