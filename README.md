@@ -20,7 +20,7 @@ QuantityMeasurementApp/
 +-- README.md
 ```
 
-## Week 1: Quantity Measurement System
+## Quantity Measurement System
 **TDD Approach & Unit Conversion**
 
 *   **18-Feb-2026 (Wednesday):** Created the repository and set up the project structure. Started implementing the Quantity Measurement System using Test Driven Development (TDD). Addressed UC1 (Feet Equality) to handle feet measurement comparisons. Extended functionality to support **Inches Equality** (UC2), allowing comparison of inch values with 100% test coverage.
@@ -59,7 +59,7 @@ QuantityMeasurementApp/
 *   **30-Mar-2026 (Monday):** Integrated **Google OAuth2** authentication and **JWT** (JSON Web Token) generation (UC18) to secure the application. Protected all REST API measurement endpoints by requiring a valid Bearer token. Implemented an `OAuth2SuccessHandler` and a `UserManagement` system targeting an H2 database via Spring Data JPA to seamlessly map Google users to local profiles. Fixed IDE lint warnings by enforcing strict null-safety checks and removed local secrets by relying on GitHub Push Protection standards.
     *   [Browse UC18 Implementation](https://github.com/skyy4/QuantityMeasurementApp/tree/feature/UC18-google-auth-jwt-user-management)
 
-## Project Continuation After UC18 (Approved Flow)
+## Project Continuation After UC18
 
 *   **UC19-UC20 (Frontend):** Implemented in separate repository as approved.
     *   [Frontend Repository](https://github.com/skyy4/QuantityMeasurementApp-Frontend)
