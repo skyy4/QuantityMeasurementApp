@@ -82,6 +82,12 @@ From `microservices/`:
 mvn clean package -DskipTests
 ```
 
+## Render deployment
+
+For Render-specific, step-by-step setup (service order, env vars, and gateway wiring), use:
+
+- `microservices/DEPLOY_RENDER.md`
+
 ## Railway deployment
 
 Create separate Railway services for the cheapest deploy path:
@@ -190,7 +196,7 @@ Set these on `history-service`:
 Set these on `api-gateway`:
 
 - `EUREKA_CLIENT_ENABLED=false`
-- `APP_CORS_ALLOWED_ORIGIN_PATTERNS`
+- `APP_CORS_ALLOWED_ORIGINS`
 - `AUTH_SERVICE_URI=<public auth-service URL>`
 - `QMA_SERVICE_URI=<public qma-service URL>`
 - `HISTORY_SERVICE_URI=<public history-service URL>`

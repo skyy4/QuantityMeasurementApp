@@ -40,7 +40,7 @@ public class HistoryController {
     @GetMapping("/api/v1/history/me")
     @Operation(summary = "Get all quantity history for the authenticated user")
     public ResponseEntity<List<QuantityMeasurementDTO>> getMyHistory(Authentication authentication) {
-        AuthenticatedUser user = (AuthenticatedUser) authentication.getPrincipal();
+        AuthenticatedUser user = extractAuthenticatedUser(authentication);
         return ResponseEntity.ok(historyService.getAllHistory(user.getUserId()));
     }
 
@@ -50,7 +50,7 @@ public class HistoryController {
             Authentication authentication,
             @PathVariable String operation
     ) {
-        AuthenticatedUser user = (AuthenticatedUser) authentication.getPrincipal();
+        AuthenticatedUser user = extractAuthenticatedUser(authentication);
         return ResponseEntity.ok(historyService.getOperationHistory(user.getUserId(), operation));
     }
 
@@ -60,21 +60,21 @@ public class HistoryController {
             Authentication authentication,
             @PathVariable String type
     ) {
-        AuthenticatedUser user = (AuthenticatedUser) authentication.getPrincipal();
+        AuthenticatedUser user = extractAuthenticatedUser(authentication);
         return ResponseEntity.ok(historyService.getMeasurementsByType(user.getUserId(), type));
     }
 
     @GetMapping("/api/v1/history/me/count/{operation}")
     @Operation(summary = "Get successful operation count for the authenticated user")
     public ResponseEntity<Long> getOperationCount(Authentication authentication, @PathVariable String operation) {
-        AuthenticatedUser user = (AuthenticatedUser) authentication.getPrincipal();
+        AuthenticatedUser user = extractAuthenticatedUser(authentication);
         return ResponseEntity.ok(historyService.getOperationCount(user.getUserId(), operation));
     }
 
     @GetMapping("/api/v1/history/me/errors")
     @Operation(summary = "Get errored history for the authenticated user")
     public ResponseEntity<List<QuantityMeasurementDTO>> getErrorHistory(Authentication authentication) {
-        AuthenticatedUser user = (AuthenticatedUser) authentication.getPrincipal();
+        AuthenticatedUser user = extractAuthenticatedUser(authentication);
         return ResponseEntity.ok(historyService.getErrorHistory(user.getUserId()));
     }
 
@@ -82,5 +82,18 @@ public class HistoryController {
         if (providedApiKey == null || !providedApiKey.equals(internalApiKey)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Invalid internal API key");
         }
+    }
+
+    private AuthenticatedUser extractAuthenticatedUser(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
+        }
+
+        Object principal = authentication.getPrincipal();
+        if (!(principal instanceof AuthenticatedUser user) || user.getUserId() == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid authentication token");
+        }
+
+        return user;
     }
 }

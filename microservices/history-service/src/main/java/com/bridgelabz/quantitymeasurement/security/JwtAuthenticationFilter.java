@@ -33,7 +33,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
         try {
             String jwt = parseJwt(request);
-            if (jwt != null && jwtUtil.validateToken(jwt)) {
+            if (jwt == null) {
+                logger.debug("No Bearer token found in request to: {}", request.getRequestURI());
+            } else if (jwtUtil.validateToken(jwt)) {
                 String role = jwtUtil.getRoleFromToken(jwt);
                 AuthenticatedUser user = new AuthenticatedUser(
                         jwtUtil.getUserIdFromToken(jwt),
@@ -51,9 +53,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                logger.debug("JWT authenticated user: {} for URI: {}", user.getEmail(), request.getRequestURI());
+            } else {
+                logger.warn("JWT token present but validation FAILED for URI: {} — possible secret mismatch or expired token", request.getRequestURI());
             }
         } catch (Exception e) {
-            logger.error("Cannot set user authentication: {}", e.getMessage());
+            logger.error("Cannot set user authentication: {} for URI: {}", e.getMessage(), request.getRequestURI());
         }
 
         filterChain.doFilter(request, response);
